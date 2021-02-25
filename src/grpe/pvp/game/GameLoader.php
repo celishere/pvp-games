@@ -48,7 +48,7 @@ final class GameLoader {
                     continue;
                 }
 
-                $team = $arenaData["teams"] ?? null;
+                $team = $arenaData["isTeam"] ?? null;
                 if($team === null) {
                     $logger->warning("Тип арены не указан. Имя арены - $name");
                     continue;
