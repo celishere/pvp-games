@@ -2,9 +2,7 @@
 
 declare(strict_types=1);
 
-namespace grpe\pvp\game\stage;
-
-use grpe\pvp\game\GameSession;
+namespace grpe\pvp\game;
 
 /**
  * Class Stage

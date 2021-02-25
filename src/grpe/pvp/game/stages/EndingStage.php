@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace grpe\pvp\game\stages;
 
 use grpe\pvp\game\GameSession;
-use grpe\pvp\game\stage\Stage;
+use grpe\pvp\game\Stage;
 
 /**
  * Class EndingStage
@@ -30,7 +30,7 @@ class EndingStage extends Stage {
      * @return int
      */
     public function getId(): int {
-        return GameSession::RUNNING_STAGE;
+        return GameSession::ENDING_STAGE;
     }
 
     public function onTick(): void {

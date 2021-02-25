@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace grpe\pvp\game\stages;
 
 use grpe\pvp\game\GameSession;
-use grpe\pvp\game\stage\Stage;
+use grpe\pvp\game\Stage;
 
 /**
  * Class CountdownStage
@@ -30,7 +30,7 @@ class CountdownStage extends Stage {
      * @return int
      */
     public function getId(): int {
-        return GameSession::RUNNING_STAGE;
+        return GameSession::COUNTDOWN_STAGE;
     }
 
     public function onTick(): void {

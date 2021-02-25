@@ -7,6 +7,7 @@ namespace grpe\pvp;
 use grpe\pvp\game\GameLoader;
 use grpe\pvp\game\GameManager;
 
+use grpe\pvp\game\task\GameSessionsTask;
 use grpe\pvp\utils\Utils;
 
 use pocketmine\plugin\PluginBase;
@@ -34,6 +35,8 @@ class Main extends PluginBase {
 
     public function onEnable(): void {
         GameLoader::loadArenas();
+
+        $this->getScheduler()->scheduleRepeatingTask(new GameSessionsTask(self::getGameManager()), 20);
     }
 
     /**

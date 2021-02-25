@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace grpe\pvp\game;
 
-use grpe\pvp\Main;
-use grpe\pvp\game\stage\Stage;
-use grpe\pvp\game\task\GameSessionsTask;
+use grpe\pvp\game\stages\CountdownStage;
+use grpe\pvp\game\stages\WaitingStage;
+use grpe\pvp\game\stages\RunningStage;
+use grpe\pvp\game\stages\EndingStage;
 
 use pocketmine\Player;
-use pocketmine\scheduler\TaskHandler;
 
 /**
  * Class GameManager
@@ -24,9 +24,7 @@ final class GameSession {
 
     /** @var Player[] */
     protected array $players = [];
-    protected array $stages  = [];
 
-    protected TaskHandler $sessionTask;
     protected GameData $data;
     protected Stage $stage;
 
@@ -42,7 +40,7 @@ final class GameSession {
     public function __construct(GameData $gameData) {
         $this->data = $gameData;
 
-        $this->sessionTask = Main::getInstance()->getScheduler()->scheduleRepeatingTask(new GameSessionsTask($this), 20);
+        $this->setStage(self::WAITING_STAGE);
     }
 
     /**
@@ -72,7 +70,17 @@ final class GameSession {
      * @return Stage
      */
     public function getStageById(int $id): Stage {
-        return $this->stages[$id];
+        switch ($id) {
+            default:
+            case 0:
+                return new WaitingStage($this);
+            case 1:
+                return new CountdownStage($this);
+            case 2:
+                return new RunningStage($this);
+            case 3:
+                return new EndingStage($this);
+        }
     }
 
     /**
