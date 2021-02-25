@@ -14,6 +14,7 @@ use pocketmine\plugin\PluginBase;
  * Class Main
  * @package grpe\pvp
  *
+ * @author celis <celishere@gmail.com> <Telegram:@celishere>
  *
  * @version 1.0.0
  * @since   1.0.0
@@ -21,6 +22,7 @@ use pocketmine\plugin\PluginBase;
 class Main extends PluginBase {
 
     private static Main $instance;
+    private static GameManager $manager;
 
     public function onLoad(): void {
         self::$instance = $this;
