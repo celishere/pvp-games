@@ -1,0 +1,8 @@
+{
+  "name": "test",
+  "mode": "test",
+  "world": "world",
+  "isTeam": true,
+  "min": 2,
+  "max": 2
+}
