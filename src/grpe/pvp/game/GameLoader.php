@@ -60,13 +60,13 @@ final class GameLoader {
                     continue;
                 }
 
-                $minPlayers = $arenaData["min"] ?? null;
+                $minPlayers = $arenaData["minPlayers"] ?? null;
                 if($minPlayers === null) {
                     $logger->warning("Мин. кол-во игроков арены не указано. Имя арены - $name.");
                     continue;
                 }
 
-                $maxPlayers = $arenaData["max"] ?? null;
+                $maxPlayers = $arenaData["maxPlayers"] ?? null;
                 if($maxPlayers === null) {
                     $logger->warning("Макс. кол-во игроков арены не указано. Имя арены - $name.");
                     continue;

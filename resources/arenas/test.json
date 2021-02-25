@@ -4,6 +4,6 @@
   "world": "world",
   "isTeam": true,
   "countdown": 15,
-  "min": 2,
-  "max": 2
+  "minPlayers": 2,
+  "maxPlayers": 2
 }
