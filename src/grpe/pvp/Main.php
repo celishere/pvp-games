@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace grpe\pvp;
 
+use grpe\pvp\game\GameLoader;
 use grpe\pvp\game\GameManager;
 
 use grpe\pvp\utils\Utils;
@@ -32,7 +33,7 @@ class Main extends PluginBase {
     }
 
     public function onEnable(): void {
-        self::getGameManager()->loadArenas();
+        GameLoader::loadArenas();
     }
 
     /**

@@ -4,13 +4,7 @@ declare(strict_types=1);
 
 namespace grpe\pvp\game;
 
-use grpe\pvp\Main;
-use grpe\pvp\utils\Utils;
-
 use pocketmine\Player;
-use pocketmine\Server;
-
-use pocketmine\utils\Config;
 
 /**
  * Class GameManager
@@ -27,70 +21,17 @@ final class GameManager {
     private array $games = [];
 
     /**
+     * @param GameData $gameData
+     */
+    public function addGame(GameData $gameData): void {
+        $this->games[spl_object_id($gameData)] = new GameSession($gameData);
+    }
+
+    /**
      * @return GameSession[]
      */
     public function getGames(): array {
         return $this->games;
-    }
-
-    public function loadArenas(): void {
-        $path = Main::getInstance()->getDataFolder() . 'arenas/';
-        $logger = Main::getInstance()->getLogger();
-
-        foreach (Utils::getArenaFiles($path) as $file) {
-            $config = new Config($path . $file);
-
-            if ($config->check()) {
-                $arenaData = $config->getAll();
-
-                $name = $arenaData["name"] ?? null;
-                if($name === null) {
-                    $logger->warning("Нет названия арены. Файл: ". $file);
-                    continue;
-                }
-
-                $mode = $arenaData["mode"] ?? null;
-                if($mode === null) {
-                    $logger->warning("Режим арены не указан. Имя арены - $name");
-                    continue;
-                }
-
-                $world = $arenaData["world"] ?? null;
-                if($world === null) {
-                    $logger->warning("Мир арены не указан. Имя арены - $name");
-                    continue;
-                }
-
-                $team = $arenaData["teams"] ?? null;
-                if($team === null) {
-                    $logger->warning("Тип арены не указан. Имя арены - $name");
-                    continue;
-                }
-
-                $minPlayers = $arenaData["min"] ?? null;
-                if($minPlayers === null) {
-                    $logger->warning("Мин. кол-во игроков арены не указано. Имя арены - $name.");
-                    continue;
-                }
-
-                $maxPlayers = $arenaData["max"] ?? null;
-                if($maxPlayers === null) {
-                    $logger->warning("Макс. кол-во игроков арены не указано. Имя арены - $name.");
-                    continue;
-                }
-
-                $gameData = new GameData($name, $mode, $world, $team, $maxPlayers, $minPlayers);
-
-                if (!Server::getInstance()->loadLevel($world)) {
-                    $logger->warning("Мир не существует. Имя арены - $name.");
-                    continue;
-                }
-
-                Server::getInstance()->getLevelByName($world)->setAutoSave(false);
-
-                $this->games[spl_object_id($gameData)] = new GameSession($gameData);
-            }
-        }
     }
 
     /**
