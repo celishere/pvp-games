@@ -54,6 +54,12 @@ final class GameLoader {
                     continue;
                 }
 
+                $countdown = $arenaData["countdown"] ?? null;
+                if($countdown === null) {
+                    $logger->warning("Countdown арены не указано. Имя арены - $name.");
+                    continue;
+                }
+
                 $minPlayers = $arenaData["min"] ?? null;
                 if($minPlayers === null) {
                     $logger->warning("Мин. кол-во игроков арены не указано. Имя арены - $name.");
@@ -66,7 +72,7 @@ final class GameLoader {
                     continue;
                 }
 
-                $gameData = new GameData($name, $mode, $world, $team, $maxPlayers, $minPlayers);
+                $gameData = new GameData($name, $mode, $world, $team, $countdown, $maxPlayers, $minPlayers);
 
                 if (!Server::getInstance()->loadLevel($world)) {
                     $logger->warning("Мир не существует. Имя арены - $name.");

@@ -34,6 +34,14 @@ class WaitingStage extends Stage {
     }
 
     public function onTick(): void {
-        // TODO: Implement onTick() method.
+        $session = $this->getSession();
+
+        foreach ($session->getPlayers() as $player) {
+            $player->sendPopup('Ожидание игроков...');
+        }
+
+        if ($session->getPlayersCount() >= $session->getData()->getMinPlayers()) {
+            $session->setStage(GameSession::COUNTDOWN_STAGE);
+        }
     }
 }

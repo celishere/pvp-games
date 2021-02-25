@@ -4,10 +4,14 @@ declare(strict_types=1);
 
 namespace grpe\pvp;
 
+use grpe\pvp\command\JoinCommand;
+use grpe\pvp\command\QuitCommand;
+use grpe\pvp\command\StatsCommand;
 use grpe\pvp\game\GameLoader;
 use grpe\pvp\game\GameManager;
 
 use grpe\pvp\game\task\GameSessionsTask;
+use grpe\pvp\player\PlayerDataManager;
 use grpe\pvp\utils\Utils;
 
 use pocketmine\plugin\PluginBase;
@@ -24,13 +28,20 @@ use pocketmine\plugin\PluginBase;
 class Main extends PluginBase {
 
     private static Main $instance;
-    private static GameManager $manager;
+    private static GameManager $gameManager;
+    private static PlayerDataManager $playerDataManager;
 
     public function onLoad(): void {
-        self::$instance = $this;
-        self::$manager  = new GameManager();
+        self::$instance           = $this;
+        self::$gameManager        = new GameManager();
+        self::$playerDataManager  = new PlayerDataManager();
 
         Utils::createDirectory($this->getDataFolder(), 'arenas/');
+
+        $commandMap = $this->getServer()->getCommandMap();
+        $commandMap->register('join', new JoinCommand('join', 'присоединиться к игре.'));
+        $commandMap->register('quit', new QuitCommand('quit'));
+        $commandMap->register('stats', new StatsCommand('quit'));
     }
 
     public function onEnable(): void {
@@ -50,6 +61,13 @@ class Main extends PluginBase {
      * @return GameManager
      */
     public static function getGameManager(): GameManager {
-        return self::$manager;
+        return self::$gameManager;
+    }
+
+    /**
+     * @return PlayerDataManager
+     */
+    public static function getPlayerDataManager(): PlayerDataManager {
+        return self::$playerDataManager;
     }
 }

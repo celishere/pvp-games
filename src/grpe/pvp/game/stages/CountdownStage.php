@@ -23,6 +23,8 @@ class CountdownStage extends Stage {
      * @param GameSession $session
      */
     public function __construct(GameSession $session) {
+        $this->setTime($session->getData()->getCountdown());
+
         parent::__construct($session);
     }
 
@@ -34,6 +36,20 @@ class CountdownStage extends Stage {
     }
 
     public function onTick(): void {
-        // TODO: Implement onTick() method.
+        $session = $this->getSession();
+
+        if ($this->getTime() > 1) {
+            if ($session->getPlayersCount() >= $session->getData()->getMinPlayers()) {
+                $this->setTime($this->getTime() - 1);
+
+                foreach ($session->getPlayers() as $player) {
+                    $player->sendPopup('Time: ' . $this->getTime());
+                }
+            } else {
+                $session->setStage(GameSession::WAITING_STAGE);
+            }
+        } else {
+            $session->setStage(GameSession::RUNNING_STAGE);
+        }
     }
 }

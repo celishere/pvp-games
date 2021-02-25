@@ -22,9 +22,10 @@ class PlayerDataManager {
 
     /**
      * @param Player $player
+     * @return PlayerData
      */
-    public function registerPlayer(Player $player): void {
-        $this->playersData[$player->getUniqueId()->toString()] = new PlayerData();
+    public function registerPlayer(Player $player): PlayerData {
+        return $this->playersData[$player->getUniqueId()->toString()] = new PlayerData();
     }
 
     /**

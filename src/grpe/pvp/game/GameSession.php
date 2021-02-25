@@ -4,10 +4,14 @@ declare(strict_types=1);
 
 namespace grpe\pvp\game;
 
+use grpe\pvp\Main;
+
 use grpe\pvp\game\stages\CountdownStage;
 use grpe\pvp\game\stages\WaitingStage;
 use grpe\pvp\game\stages\RunningStage;
 use grpe\pvp\game\stages\EndingStage;
+
+use grpe\pvp\player\PlayerData;
 
 use pocketmine\Player;
 
@@ -84,10 +88,35 @@ final class GameSession {
     }
 
     /**
+     * @param Player $player
+     */
+    public function addPlayer(Player $player): void {
+        $this->players[$player->getUniqueId()->toString()] = $player;
+
+        $manager = Main::getPlayerDataManager();
+        $data = $manager->getPlayerData($player);
+
+        if (!$data instanceof PlayerData) {
+            $data = $manager->registerPlayer($player);
+        }
+
+        $data->setSession($this);
+
+        $player->sendMessage('Присоединился.');
+    }
+
+    /**
      * @return Player[]
      */
     public function getPlayers(): array {
         return $this->players;
+    }
+
+    /**
+     * @return int
+     */
+    public function getPlayersCount(): int {
+        return count($this->players);
     }
 
     public function tick(): void {

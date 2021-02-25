@@ -21,6 +21,7 @@ final class GameData {
 
     private bool $team;
 
+    private int $countdown;
     private int $maxPlayers;
     private int $minPlayers;
 
@@ -33,12 +34,14 @@ final class GameData {
      * @param int $maxPlayers
      * @param int $minPlayers
      */
-    public function __construct(string $name, string $mode, string $world, bool $team, int $maxPlayers, int $minPlayers) {
+    public function __construct(string $name, string $mode, string $world, bool $team, int $countdown, int $maxPlayers, int $minPlayers) {
         $this->name = $name;
         $this->mode = $mode;
         $this->world = $world;
 
         $this->team = $team;
+
+        $this->countdown = $countdown;
 
         $this->minPlayers = $minPlayers;
         $this->maxPlayers = $maxPlayers;
@@ -70,6 +73,13 @@ final class GameData {
      */
     public function isTeam(): bool {
         return $this->team;
+    }
+
+    /**
+     * @return int
+     */
+    public function getCountdown(): int {
+        return $this->countdown;
     }
 
     /**

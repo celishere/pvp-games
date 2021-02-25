@@ -3,6 +3,7 @@
   "mode": "test",
   "world": "world",
   "isTeam": true,
+  "countdown": 15,
   "min": 2,
   "max": 2
 }

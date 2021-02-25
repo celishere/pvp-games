@@ -59,8 +59,13 @@ final class GameManager {
             $data = $game->getData();
 
             if ($data->getMode() === $mode) {
-                if (count($game->getPlayers()) < $data->getMaxPlayers())
-                return $game;
+                $stageId = $game->getStage()->getId();
+
+                if ($stageId === GameSession::WAITING_STAGE or $stageId === GameSession::COUNTDOWN_STAGE) {
+                    if ($game->getPlayersCount() < $data->getMaxPlayers()) {
+                        return $game;
+                    }
+                }
             }
         }
 
