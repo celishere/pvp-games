@@ -6,7 +6,7 @@ namespace grpe\pvp\game;
 
 use grpe\pvp\Main;
 use grpe\pvp\game\stage\Stage;
-use grpe\pvp\game\task\GameSessionTask;
+use grpe\pvp\game\task\GameSessionsTask;
 
 use pocketmine\Player;
 use pocketmine\scheduler\TaskHandler;
@@ -42,7 +42,7 @@ final class GameSession {
     public function __construct(GameData $gameData) {
         $this->data = $gameData;
 
-        $this->sessionTask = Main::getInstance()->getScheduler()->scheduleRepeatingTask(new GameSessionTask($this), 20);
+        $this->sessionTask = Main::getInstance()->getScheduler()->scheduleRepeatingTask(new GameSessionsTask($this), 20);
     }
 
     /**
@@ -83,6 +83,6 @@ final class GameSession {
     }
 
     public function tick(): void {
-        //stage->tick()
+        $this->getStage()->onTick();
     }
 }

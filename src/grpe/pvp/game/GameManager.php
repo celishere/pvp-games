@@ -26,6 +26,13 @@ final class GameManager {
     /** @var GameSession[] */
     private array $games = [];
 
+    /**
+     * @return GameSession[]
+     */
+    public function getGames(): array {
+        return $this->games;
+    }
+
     public function loadArenas(): void {
         $path = Main::getInstance()->getDataFolder() . 'arenas/';
         $logger = Main::getInstance()->getLogger();
@@ -91,7 +98,7 @@ final class GameManager {
      * @return GameSession|null
      */
     public function getPlayerSession(Player $player): ?GameSession {
-        $uuid = $player->getUniqueId()->toString(); //на 1.1 хранение игроков по uuid, может не прокатить
+        $uuid = $player->getUniqueId()->toString(); //на 1.1 хранение игроков по uuid может не прокатить
 
         foreach ($this->games as $gameSession) {
             if (isset($gameSession->getPlayers()[$uuid])) {
