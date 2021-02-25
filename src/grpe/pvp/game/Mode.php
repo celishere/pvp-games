@@ -15,4 +15,13 @@ namespace grpe\pvp\game;
  */
 abstract class Mode {
 
+    /**
+     * @return GameSession
+     */
+    abstract public function getSession(): GameSession;
+
+    /**
+     * @param int $stageId
+     */
+    abstract public function onChangeStage(int $stageId): void;
 }

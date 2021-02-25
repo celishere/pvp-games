@@ -32,7 +32,7 @@ class Main extends PluginBase {
     }
 
     public function onEnable(): void {
-        self::getManager()->loadArenas();
+        self::getGameManager()->loadArenas();
     }
 
     /**
@@ -45,7 +45,7 @@ class Main extends PluginBase {
     /**
      * @return GameManager
      */
-    public static function getManager(): GameManager {
+    public static function getGameManager(): GameManager {
         return self::$manager;
     }
 }

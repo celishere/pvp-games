@@ -1,6 +1,6 @@
 <?php
 
-namespace grpe\pvp\events;
+namespace grpe\pvp\event;
 
 use grpe\pvp\game\Mode;
 
@@ -10,7 +10,7 @@ use pocketmine\event\Event;
 
 /**
  * Class PvPJoinEvent
- * @package grpe\pvp\events
+ * @package grpe\pvp\event
  *
  * @author celis <celishere@gmail.com> <Telegram:@celishere>
  *
