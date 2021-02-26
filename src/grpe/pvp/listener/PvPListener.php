@@ -52,7 +52,7 @@ class PvPListener implements Listener {
                 $mode = $gameSession->getMode();
 
                 if ($mode instanceof StickDuels) {
-                    $level = $block->getLevelNonNull();
+                    $level = $block->getLevelNonNull(); // $level = $player->getLevel();
 
                     if ($block->isHeadPart()) {
                         $bed = $level->getTile($block);
