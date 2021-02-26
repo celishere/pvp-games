@@ -137,7 +137,7 @@ final class GameSession {
 
         $data->setSession($this);
 
-        $player->teleport($this->getLevel()->getSpawnLocation());
+        $player->teleport($this->getLevel()->getSpawnLocation()); // add 'worldSpawn' to json config
         $player->sendMessage('Присоединился.');
     }
 
