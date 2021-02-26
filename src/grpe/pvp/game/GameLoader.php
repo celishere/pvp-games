@@ -5,6 +5,8 @@ namespace grpe\pvp\game;
 use grpe\pvp\Main;
 use grpe\pvp\utils\Utils;
 
+use InvalidArgumentException;
+use JsonException;
 use pocketmine\level\generator\Flat;
 use pocketmine\Server;
 use pocketmine\utils\Config;
@@ -73,7 +75,20 @@ final class GameLoader {
                     continue;
                 }
 
-                $gameData = new GameData($name, $mode, $world, $team, $countdown, $maxPlayers, $minPlayers);
+                $waitingRoomRaw = $arenaData["waitingRoom"] ?? null;
+                if($waitingRoomRaw === null) {
+                    $logger->warning("Точка ожидания не указана. Имя арены - $name.");
+                    continue;
+                }
+
+                try {
+                    $waitingRoom = Utils::unpackRawVector($waitingRoomRaw);
+                } catch (InvalidArgumentException $e) {
+                    $logger->warning("Была указана некорректная локация. Имя арены - $name.");
+                    continue;
+                }
+
+                $gameData = new GameData($name, $mode, $world, $team, $countdown, $maxPlayers, $minPlayers, $waitingRoom);
 
                 if (!Server::getInstance()->loadLevel($world)) {
                     $logger->warning("Мир не существует. Имя арены - $name.");

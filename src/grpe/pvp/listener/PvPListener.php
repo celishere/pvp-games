@@ -11,11 +11,13 @@ use grpe\pvp\game\mode\StickDuels;
 use pocketmine\event\Listener;
 use pocketmine\event\block\BlockBreakEvent;
 use pocketmine\event\player\PlayerJoinEvent;
+use pocketmine\event\player\PlayerQuitEvent;
 
 use pocketmine\block\Bed;
 use pocketmine\tile\Bed as TileBed;
 
 use pocketmine\Server;
+
 use pocketmine\utils\TextFormat;
 
 /**
@@ -31,11 +33,16 @@ class PvPListener implements Listener {
 
     /**
      * @param PlayerJoinEvent $event
-     *
-     * todo убрать
      */
     public function onJoin(PlayerJoinEvent $event): void {
         Server::getInstance()->dispatchCommand($event->getPlayer(), 'join');
+    }
+
+    /**
+     * @param PlayerQuitEvent $event
+     */
+    public function onQuit(PlayerQuitEvent $event): void {
+        Server::getInstance()->dispatchCommand($event->getPlayer(), 'quit');
     }
 
     /**
@@ -49,6 +56,7 @@ class PvPListener implements Listener {
             $gameSession = Main::getGameManager()->getPlayerSession($player);
 
             if ($gameSession instanceof GameSession) {
+                $event->setCancelled();
                 $mode = $gameSession->getMode();
 
                 if ($mode instanceof StickDuels) {
@@ -65,7 +73,6 @@ class PvPListener implements Listener {
                     $teamId = $mode->getPlayerTeam($player);
 
                     if ($teamId === $bedTeamId) {
-
                         foreach ($gameSession->getPlayers() as $sessionPlayers) {
                             $sessionPlayers->sendMessage(TextFormat::colorize('&a'. $player->getName() .' &fсломал кровать вражеской команды.'));
                         }

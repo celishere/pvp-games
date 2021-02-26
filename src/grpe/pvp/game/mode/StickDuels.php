@@ -116,10 +116,17 @@ class StickDuels extends Mode {
     }
 
     public function resetMap(): void {
-        //todo тп на спавн
-        $levelName = $this->getSession()->getData()->getWorld();
+        $session = $this->getSession();
+        $levelName = $session->getData()->getWorld();
 
-        Server::getInstance()->unloadLevel($this->getSession()->getLevel());
-        Server::getInstance()->loadLevel($levelName);
+        $session->getLevel()->unloadChunks(true);
+
+        foreach ($session->getLevel()->getChunks() as $chunk) {
+            $chunk->onUnload();
+        }
+
+        foreach ($session->getPlayers() as $player) {
+            $player->teleport($session->getData()->getWaitingRoom());
+        }
     }
 }

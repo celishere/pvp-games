@@ -15,9 +15,11 @@ use grpe\pvp\game\mode\StickDuels;
 
 use grpe\pvp\player\PlayerData;
 
-use pocketmine\level\Level;
+use pocketmine\level\Location;
 use pocketmine\Player;
 use pocketmine\Server;
+
+use pocketmine\level\Level;
 
 /**
  * Class GameManager
@@ -137,7 +139,11 @@ final class GameSession {
 
         $data->setSession($this);
 
-        $player->teleport($this->getLevel()->getSpawnLocation()); // add 'worldSpawn' to json config
+        /** Я без понятия, если дать заранее локацию, то после сбросы арены игрока перестанет переносить */
+        $w = $this->getData()->getWaitingRoom();
+        $pos = new Location($w->getX(), $w->getY(), $w->getZ(), 0.0, 0.0, $this->getLevel());
+        $player->teleport($pos);
+
         $player->sendMessage('Присоединился.');
     }
 
@@ -166,6 +172,22 @@ final class GameSession {
      */
     public function getPlayersCount(): int {
         return count($this->players);
+    }
+
+    public function reset(): void {
+        foreach ($this->getPlayers() as $player) {
+            $this->removePlayer($player);
+        }
+
+        $this->players = [];
+
+        $this->setStage(self::WAITING_STAGE);
+
+        if ($this->getLevel()->unload()) {
+            if (Server::getInstance()->loadLevel($this->getData()->getWorld())) {
+                var_dump(2);
+            }
+        }
     }
 
     public function tick(): void {

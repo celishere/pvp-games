@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace grpe\pvp\game;
 
+use pocketmine\math\Vector3;
+
 /**
  * Class GameData
  * @package grpe\pvp\game
@@ -25,6 +27,8 @@ final class GameData {
     private int $maxPlayers;
     private int $minPlayers;
 
+    private Vector3 $waitingRoom;
+
     /**
      * GameData constructor.
      * @param string $name
@@ -34,8 +38,9 @@ final class GameData {
      * @param int $countdown
      * @param int $maxPlayers
      * @param int $minPlayers
+     * @param Vector3 $waitingRoom
      */
-    public function __construct(string $name, string $mode, string $world, bool $team, int $countdown, int $maxPlayers, int $minPlayers) {
+    public function __construct(string $name, string $mode, string $world, bool $team, int $countdown, int $maxPlayers, int $minPlayers, Vector3 $waitingRoom) {
         $this->name = $name;
         $this->mode = $mode;
         $this->world = $world;
@@ -46,6 +51,8 @@ final class GameData {
 
         $this->minPlayers = $minPlayers;
         $this->maxPlayers = $maxPlayers;
+
+        $this->waitingRoom = $waitingRoom;
     }
 
     /**
@@ -95,5 +102,12 @@ final class GameData {
      */
     public function getMinPlayers(): int {
         return $this->minPlayers;
+    }
+
+    /**
+     * @return Vector3
+     */
+    public function getWaitingRoom(): Vector3 {
+        return $this->waitingRoom;
     }
 }

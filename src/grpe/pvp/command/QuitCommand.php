@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace grpe\pvp\command;
 
+use grpe\pvp\game\GameSession;
+use grpe\pvp\Main;
+use grpe\pvp\player\PlayerData;
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
 
@@ -37,9 +40,18 @@ class QuitCommand extends Command {
      */
     public function execute(CommandSender $sender, string $commandLabel, array $args): bool {
         if ($sender instanceof Player) {
-            //todo
-            return true;
+            $playerData = Main::getPlayerDataManager()->getPlayerData($sender);
+
+            if ($playerData instanceof PlayerData) {
+                $gameSession = $playerData->getSession();
+
+                if ($gameSession instanceof GameSession) {
+                    $gameSession->removePlayer($sender);
+                    return true;
+                }
+            }
         }
+
         return false;
     }
 }

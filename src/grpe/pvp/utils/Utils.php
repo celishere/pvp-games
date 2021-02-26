@@ -4,6 +4,14 @@ declare(strict_types=1);
 
 namespace grpe\pvp\utils;
 
+use grpe\pvp\Main;
+use InvalidArgumentException;
+use JsonException;
+use pocketmine\level\Level;
+use pocketmine\level\Location;
+use pocketmine\math\Vector3;
+use pocketmine\Server;
+
 /**
  * Class Utils
  * @package grpe\pvp\utils
@@ -41,5 +49,19 @@ class Utils {
         }
 
         return $files;
+    }
+
+    /**
+     * @param string $rawVector
+     * @return Vector3
+     */
+    public static function unpackRawVector(string $rawVector): Vector3 {
+        $loc = explode('_', $rawVector);
+
+        if (count($loc) >= 3) {
+            return new Location((float) $loc[0], (float) $loc[1], (float) $loc[2]);
+        }
+
+        throw new InvalidArgumentException('Неккоректная локация.');
     }
 }
