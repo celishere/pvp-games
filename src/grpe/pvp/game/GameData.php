@@ -31,6 +31,7 @@ final class GameData {
      * @param string $mode
      * @param string $world
      * @param bool $team
+     * @param int $countdown
      * @param int $maxPlayers
      * @param int $minPlayers
      */

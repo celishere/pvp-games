@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace grpe\pvp\game;
 
+use pocketmine\Player;
+
 /**
  * Class Mode
  * @package grpe\pvp\game
@@ -21,7 +23,13 @@ abstract class Mode {
     abstract public function getSession(): GameSession;
 
     /**
+     * @param Player $player
+     * @return Player[]
+     */
+    abstract public function getOpponent(Player $player): array;
+
+    /**
      * @param int $stageId
      */
-    abstract public function onChangeStage(int $stageId): void;
+    abstract public function onStageChange(int $stageId): void;
 }

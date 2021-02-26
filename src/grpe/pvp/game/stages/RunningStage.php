@@ -5,7 +5,10 @@ declare(strict_types=1);
 namespace grpe\pvp\game\stages;
 
 use grpe\pvp\game\GameSession;
+use grpe\pvp\game\mode\StickDuels;
 use grpe\pvp\game\Stage;
+
+use pocketmine\utils\TextFormat;
 
 /**
  * Class RunningStage
@@ -23,6 +26,17 @@ class RunningStage extends Stage {
      * @param GameSession $session
      */
     public function __construct(GameSession $session) {
+        //$this->setTime($session->getData()->getGameTime());
+        $this->setTime(60);
+
+        foreach ($session->getPlayers() as $player) {
+            var_dump($session->getMode()->getOpponent($player));
+            $enemy = implode("&7, &c", $session->getMode()->getOpponent($player));
+
+            $player->sendMessage(TextFormat::GREEN. 'Игра началась.');
+            $player->sendMessage(TextFormat::colorize('Оппонент&7: &c'. $enemy));
+        }
+
         parent::__construct($session);
     }
 
@@ -34,6 +48,25 @@ class RunningStage extends Stage {
     }
 
     public function onTick(): void {
-        // TODO: Implement onTick() method.
+        $session = $this->getSession();
+
+        if ($this->getTime() > 1) {
+            $mode = $session->getMode();
+            $message = "Time: ". $this->getTime();
+
+            if ($mode instanceof StickDuels) {
+                foreach ($mode->getScores() as $teamId => $score) {
+                    $message .= "\n#". $teamId. " team: " .$score;
+                }
+            }
+
+            $this->setTime($this->getTime() - 1);
+
+            foreach ($session->getPlayers() as $player) {
+                $player->sendPopup($message);
+            }
+        } else {
+            $session->setStage(GameSession::ENDING_STAGE);
+        }
     }
 }

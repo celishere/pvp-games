@@ -5,6 +5,7 @@ namespace grpe\pvp\game;
 use grpe\pvp\Main;
 use grpe\pvp\utils\Utils;
 
+use pocketmine\level\generator\Flat;
 use pocketmine\Server;
 use pocketmine\utils\Config;
 

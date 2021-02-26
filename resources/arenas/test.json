@@ -1,9 +1,10 @@
 {
   "name": "test",
   "mode": "test",
-  "world": "world",
+  "world": "test",
   "isTeam": true,
-  "countdown": 15,
-  "minPlayers": 2,
-  "maxPlayers": 2
+  "countdown": 5,
+  "gameTime": 60,
+  "minPlayers": 4,
+  "maxPlayers": 4
 }

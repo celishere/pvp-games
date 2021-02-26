@@ -34,6 +34,10 @@ class EndingStage extends Stage {
     }
 
     public function onTick(): void {
-        // TODO: Implement onTick() method.
+        $session = $this->getSession();
+
+        foreach ($session->getPlayers() as $player) {
+            $session->removePlayer($player);
+        }
     }
 }

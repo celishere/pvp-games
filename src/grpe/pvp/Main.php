@@ -11,6 +11,7 @@ use grpe\pvp\game\GameLoader;
 use grpe\pvp\game\GameManager;
 
 use grpe\pvp\game\task\GameSessionsTask;
+use grpe\pvp\listener\PvPListener;
 use grpe\pvp\player\PlayerDataManager;
 use grpe\pvp\utils\Utils;
 
@@ -47,6 +48,7 @@ class Main extends PluginBase {
     public function onEnable(): void {
         GameLoader::loadArenas();
 
+        $this->getServer()->getPluginManager()->registerEvents(new PvPListener(), $this);
         $this->getScheduler()->scheduleRepeatingTask(new GameSessionsTask(self::getGameManager()), 20);
     }
 

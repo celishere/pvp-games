@@ -11,9 +11,13 @@ use grpe\pvp\game\stages\WaitingStage;
 use grpe\pvp\game\stages\RunningStage;
 use grpe\pvp\game\stages\EndingStage;
 
+use grpe\pvp\game\mode\StickDuels;
+
 use grpe\pvp\player\PlayerData;
 
+use pocketmine\level\Level;
 use pocketmine\Player;
+use pocketmine\Server;
 
 /**
  * Class GameManager
@@ -31,6 +35,7 @@ final class GameSession {
 
     protected GameData $data;
     protected Stage $stage;
+    protected Mode $mode;
 
     public const WAITING_STAGE = 0;
     public const COUNTDOWN_STAGE = 1;
@@ -43,6 +48,7 @@ final class GameSession {
      */
     public function __construct(GameData $gameData) {
         $this->data = $gameData;
+        $this->mode = $this->getModeById($gameData->getMode());
 
         $this->setStage(self::WAITING_STAGE);
     }
@@ -55,9 +61,18 @@ final class GameSession {
     }
 
     /**
+     * @return Level
+     */
+    public function getLevel(): Level {
+        return Server::getInstance()->getLevelByName($this->data->getWorld());
+    }
+
+    /**
      * @param int $stage
      */
     public function setStage(int $stage): void {
+        $this->getMode()->onStageChange($stage);
+
         $this->stage = $this->getStageById($stage);
     }
 
@@ -88,6 +103,26 @@ final class GameSession {
     }
 
     /**
+     * @return Mode
+     */
+    public function getMode(): Mode {
+        return $this->mode;
+    }
+
+    /**
+     * @param string $id
+     *
+     * @return Mode
+     */
+    public function getModeById(string $id): Mode {
+        switch ($id) {
+            default:
+            case 'stick':
+                return new StickDuels($this);
+        }
+    }
+
+    /**
      * @param Player $player
      */
     public function addPlayer(Player $player): void {
@@ -102,7 +137,21 @@ final class GameSession {
 
         $data->setSession($this);
 
+        $player->teleport($this->getLevel()->getSpawnLocation());
         $player->sendMessage('Присоединился.');
+    }
+
+    /**
+     * @param Player $player
+     */
+    public function removePlayer(Player $player): void {
+        unset($this->players[$player->getUniqueId()->toString()]);
+
+        Main::getPlayerDataManager()->unregisterPlayer($player);
+
+        if ($player->isOnline()) {
+            $player->teleport(Server::getInstance()->getDefaultLevel()->getSpawnLocation());
+        }
     }
 
     /**
