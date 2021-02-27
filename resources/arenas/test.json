@@ -7,5 +7,5 @@
   "gameTime": 60,
   "minPlayers": 4,
   "maxPlayers": 4,
-  "waitingRoom": "1.5_10_1.5_test_360_2"
+  "waitingRoom": "1.5:10:1.5:test:360:2"
 }
