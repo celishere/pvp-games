@@ -56,7 +56,8 @@ class Utils {
      * @return Vector3
      */
     public static function unpackRawVector(string $rawVector): Vector3 {
-        $loc = explode('_', $rawVector);
+        // $loc = explode('_', $rawVector);
+        $loc = explode(':', $rawVector);
 
         if (count($loc) >= 3) {
             return new Location((float) $loc[0], (float) $loc[1], (float) $loc[2]);
