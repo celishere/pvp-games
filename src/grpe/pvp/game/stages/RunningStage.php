@@ -30,8 +30,9 @@ class RunningStage extends Stage {
         $this->setTime(60);
 
         foreach ($session->getPlayers() as $player) {
-            var_dump($session->getMode()->getOpponent($player));
             $enemy = implode("&7, &c", $session->getMode()->getOpponent($player));
+
+            $player->teleport($session->getMode()->getPos($player));
 
             $player->sendMessage(TextFormat::GREEN. 'Игра началась.');
             $player->sendMessage(TextFormat::colorize('Оппонент&7: &c'. $enemy));

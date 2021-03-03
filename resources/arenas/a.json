@@ -1,6 +1,6 @@
 {
   "name": "test",
-  "mode": "test",
+  "mode": "classic",
   "world": "test",
   "isTeam": true,
   "countdown": 5,

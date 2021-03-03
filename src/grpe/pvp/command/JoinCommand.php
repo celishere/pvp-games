@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace grpe\pvp\command;
 
-use grpe\pvp\game\GameSession;
 use grpe\pvp\Main;
+use grpe\pvp\game\GameSession;
+
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
 
 use pocketmine\Player;
+
 use pocketmine\utils\TextFormat;
 
 /**
@@ -40,7 +42,7 @@ class JoinCommand extends Command {
      */
     public function execute(CommandSender $sender, string $commandLabel, array $args): bool {
         if ($sender instanceof Player) {
-            $gameSession = Main::getGameManager()->findGameByMode('test');
+            $gameSession = Main::getGameManager()->findGameByMode('classic');
 
             if ($gameSession instanceof GameSession) {
                 $gameSession->addPlayer($sender);

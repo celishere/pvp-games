@@ -7,11 +7,13 @@ namespace grpe\pvp\game\mode;
 use grpe\pvp\game\GameSession;
 use grpe\pvp\game\TeamMode;
 
-use pocketmine\Player;
+use pocketmine\item\Item as I;
 use pocketmine\math\Vector3;
 
+use pocketmine\Player;
+
 /**
- * Class StickDuels
+ * Class ClassicDuels
  * @package grpe\pvp\game\mode
  *
  * @author celis <celishere@gmail.com> <Telegram:@celishere>
@@ -19,15 +21,14 @@ use pocketmine\math\Vector3;
  * @version 1.0.0
  * @since   1.0.0
  */
-class StickDuels extends TeamMode {
+class ClassicDuels extends TeamMode {
 
     private GameSession $session;
 
     private array $teams = [0 => [], 1 => []];
-    private array $scores = [0 => 0, 1 => 0];
 
     /**
-     * StickDuels constructor.
+     * ClassicDuels constructor.
      * @param GameSession $session
      */
     public function __construct(GameSession $session) {
@@ -49,13 +50,6 @@ class StickDuels extends TeamMode {
     }
 
     /**
-     * @return array|array[]
-     */
-    public function getScores(): array {
-        return $this->scores;
-    }
-
-    /**
      * @param Player $player
      * @return int|null
      */
@@ -67,18 +61,6 @@ class StickDuels extends TeamMode {
         }
 
         return null;
-    }
-
-    /**
-     * @param int $teamId
-     */
-    public function addScore(int $teamId): void {
-        $this->scores[$teamId]++;
-
-        if ($this->scores[$teamId] >= 5) {
-            $this->getSession()->setStage(GameSession::ENDING_STAGE);
-            $this->resetMap();
-        }
     }
 
     /**
@@ -119,6 +101,9 @@ class StickDuels extends TeamMode {
      */
     public function onStageChange(int $stageId): void {
         if ($stageId === GameSession::RUNNING_STAGE) {
+            $contents = [I::get(I::IRON_SWORD), I::get(I::BOW), I::get(I::ARROW, 0, 32)];
+            $armor_contents = [I::get(I::IRON_HELMET), I::get(I::IRON_CHESTPLATE), I::get(I::IRON_LEGGINGS), I::get(I::IRON_BOOTS)];
+
             $maxSlots = $this->getSession()->getData()->isTeam() ? 2 : 1;
 
             foreach ($this->getSession()->getPlayers() as $player) {
@@ -128,21 +113,10 @@ class StickDuels extends TeamMode {
                         break;
                     }
                 }
+
+                $player->getInventory()->setContents($contents);
+                $player->getArmorInventory()->setContents($armor_contents);
             }
-        }
-    }
-
-    public function resetMap(): void {
-        $session = $this->getSession();
-
-        $session->getLevel()->unloadChunks(true);
-
-        foreach ($session->getLevel()->getChunks() as $chunk) {
-            $chunk->onUnload();
-        }
-
-        foreach ($session->getPlayers() as $player) {
-            $player->teleport($session->getData()->getWaitingRoom());
         }
     }
 }

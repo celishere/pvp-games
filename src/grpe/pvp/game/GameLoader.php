@@ -88,7 +88,33 @@ final class GameLoader {
                     continue;
                 }
 
-                $gameData = new GameData($name, $mode, $world, $team, $countdown, $maxPlayers, $minPlayers, $waitingRoom);
+                $pos1Raw = $arenaData["pos1"] ?? null;
+                if($pos1Raw === null) {
+                    $logger->warning("Точка #1 не указана. Имя арены - $name.");
+                    continue;
+                }
+
+                try {
+                    $pos1 = Utils::unpackRawVector($pos1Raw);
+                } catch (InvalidArgumentException $e) {
+                    $logger->warning("Была указана некорректная локация. Имя арены - $name.");
+                    continue;
+                }
+
+                $pos2Raw = $arenaData["pos2"] ?? null;
+                if($pos2Raw === null) {
+                    $logger->warning("Точка #2 не указана. Имя арены - $name.");
+                    continue;
+                }
+
+                try {
+                    $pos2 = Utils::unpackRawVector($pos2Raw);
+                } catch (InvalidArgumentException $e) {
+                    $logger->warning("Была указана некорректная локация. Имя арены - $name.");
+                    continue;
+                }
+
+                $gameData = new GameData($name, $mode, $world, $team, $countdown, $maxPlayers, $minPlayers, $waitingRoom, $pos1, $pos2);
 
                 if (!Server::getInstance()->loadLevel($world)) {
                     $logger->warning("Мир не существует. Имя арены - $name.");

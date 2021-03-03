@@ -28,6 +28,8 @@ final class GameData {
     private int $minPlayers;
 
     private Vector3 $waitingRoom;
+    private Vector3 $pos1;
+    private Vector3 $pos2;
 
     /**
      * GameData constructor.
@@ -39,8 +41,10 @@ final class GameData {
      * @param int $maxPlayers
      * @param int $minPlayers
      * @param Vector3 $waitingRoom
+     * @param Vector3 $pos1
+     * @param Vector3 $pos2
      */
-    public function __construct(string $name, string $mode, string $world, bool $team, int $countdown, int $maxPlayers, int $minPlayers, Vector3 $waitingRoom) {
+    public function __construct(string $name, string $mode, string $world, bool $team, int $countdown, int $maxPlayers, int $minPlayers, Vector3 $waitingRoom, Vector3 $pos1, Vector3 $pos2) {
         $this->name = $name;
         $this->mode = $mode;
         $this->world = $world;
@@ -53,6 +57,9 @@ final class GameData {
         $this->maxPlayers = $maxPlayers;
 
         $this->waitingRoom = $waitingRoom;
+
+        $this->pos1 = $pos1;
+        $this->pos2 = $pos2;
     }
 
     /**
@@ -109,5 +116,19 @@ final class GameData {
      */
     public function getWaitingRoom(): Vector3 {
         return $this->waitingRoom;
+    }
+
+    /**
+     * @return Vector3
+     */
+    public function getPos1(): Vector3 {
+        return $this->pos1;
+    }
+
+    /**
+     * @return Vector3
+     */
+    public function getPos2(): Vector3 {
+        return $this->pos2;
     }
 }

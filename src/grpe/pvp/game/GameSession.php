@@ -12,14 +12,17 @@ use grpe\pvp\game\stages\RunningStage;
 use grpe\pvp\game\stages\EndingStage;
 
 use grpe\pvp\game\mode\StickDuels;
+use grpe\pvp\game\mode\ClassicDuels;
 
 use grpe\pvp\player\PlayerData;
 
-use pocketmine\level\Location;
 use pocketmine\Player;
 use pocketmine\Server;
 
 use pocketmine\level\Level;
+use pocketmine\level\Location;
+
+use pocketmine\utils\TextFormat;
 
 /**
  * Class GameManager
@@ -121,6 +124,8 @@ final class GameSession {
             default:
             case 'stick':
                 return new StickDuels($this);
+            case 'classic':
+                return new ClassicDuels($this);
         }
     }
 
@@ -144,19 +149,52 @@ final class GameSession {
         $pos = new Location($w->getX(), $w->getY(), $w->getZ(), 0.0, 0.0, $this->getLevel());
         $player->teleport($pos);
 
-        $player->sendMessage('Присоединился.');
+        $player->sendMessage(TextFormat::GREEN. 'Присоединился.');
     }
 
     /**
      * @param Player $player
+     * @param bool $killed
      */
-    public function removePlayer(Player $player): void {
+    public function removePlayer(Player $player, bool $killed = false): void {
+        if (!$killed) {
+            if ($player->isOnline()) {
+                $player->teleport(Server::getInstance()->getDefaultLevel()->getSpawnLocation());
+            }
+
+            foreach ($this->getPlayers() as $players) {
+                $players->sendMessage($player->getName() .' вышел.');
+            }
+        } else {
+            foreach ($this->getPlayers() as $players) {
+                $players->sendMessage($player->getName() .' убит.');
+            }
+
+            $player->setGamemode(3);
+        }
+
         unset($this->players[$player->getUniqueId()->toString()]);
 
         Main::getPlayerDataManager()->unregisterPlayer($player);
 
-        if ($player->isOnline()) {
-            $player->teleport(Server::getInstance()->getDefaultLevel()->getSpawnLocation());
+        if ($this->getStage() instanceof RunningStage) {
+            $mode = $this->getMode();
+
+            if ($mode instanceof TeamMode) {
+                $teamId = $mode->getPlayerTeam($player);
+
+                if ($teamId !== null) {
+                    unset($mode->getTeams()[$teamId][$player->getUniqueId()->toString()]);
+
+                    if (count($mode->getTeams()[$teamId]) < 1) {
+                        $this->setStage(self::ENDING_STAGE);
+
+                        foreach ($this->getPlayers() as $players) {
+                            $players->sendMessage('Игра окончена.');
+                        }
+                    }
+                }
+            }
         }
     }
 

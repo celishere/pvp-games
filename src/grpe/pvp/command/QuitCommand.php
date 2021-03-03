@@ -4,9 +4,10 @@ declare(strict_types=1);
 
 namespace grpe\pvp\command;
 
-use grpe\pvp\game\GameSession;
 use grpe\pvp\Main;
+use grpe\pvp\game\GameSession;
 use grpe\pvp\player\PlayerData;
+
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
 

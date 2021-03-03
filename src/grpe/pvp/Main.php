@@ -4,16 +4,19 @@ declare(strict_types=1);
 
 namespace grpe\pvp;
 
+use grpe\pvp\game\GameLoader;
+use grpe\pvp\game\GameManager;
+use grpe\pvp\game\task\GameSessionsTask;
+
+use grpe\pvp\listener\PvPListener;
+
+use grpe\pvp\player\PlayerDataManager;
+
+use grpe\pvp\utils\Utils;
+
 use grpe\pvp\command\JoinCommand;
 use grpe\pvp\command\QuitCommand;
 use grpe\pvp\command\StatsCommand;
-use grpe\pvp\game\GameLoader;
-use grpe\pvp\game\GameManager;
-
-use grpe\pvp\game\task\GameSessionsTask;
-use grpe\pvp\listener\PvPListener;
-use grpe\pvp\player\PlayerDataManager;
-use grpe\pvp\utils\Utils;
 
 use pocketmine\plugin\PluginBase;
 

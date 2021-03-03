@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace grpe\pvp\game;
 
 use pocketmine\Player;
+use pocketmine\math\Vector3;
 
 /**
  * Class Mode
@@ -27,6 +28,12 @@ abstract class Mode {
      * @return Player[]
      */
     abstract public function getOpponent(Player $player): array;
+
+    /**
+     * @param Player $player
+     * @return Vector3
+     */
+    abstract public function getPos(Player $player): Vector3;
 
     /**
      * @param int $stageId
