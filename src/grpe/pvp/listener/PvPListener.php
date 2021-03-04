@@ -7,6 +7,7 @@ namespace grpe\pvp\listener;
 use grpe\pvp\Main;
 use grpe\pvp\game\GameSession;
 use grpe\pvp\game\mode\StickDuels;
+use grpe\pvp\game\mode\ClassicDuels;
 
 use pocketmine\event\Listener;
 
@@ -98,6 +99,8 @@ class PvPListener implements Listener {
             $entitySession = Main::getGameManager()->getPlayerSession($entity);
 
             if ($entitySession instanceof GameSession) {
+                $mode = $entitySession->getMode();
+
                 if ($event instanceof EntityDamageByEntityEvent) {
                     $damager = $event->getDamager();
 
@@ -105,7 +108,7 @@ class PvPListener implements Listener {
                         $damagerSession = Main::getGameManager()->getPlayerSession($damager);
 
                         if ($damagerSession instanceof GameSession) {
-                            if ($entitySession->getData()->getMode() === 'classic') {
+                            if ($mode instanceof ClassicDuels) {
                                 if (($entity->getHealth() - $event->getFinalDamage()) < 0) {
                                     $event->setCancelled();
 
@@ -116,11 +119,13 @@ class PvPListener implements Listener {
                         }
                     }
                 } else {
-                    if ($entitySession->getData()->getMode() === 'classic') {
                         if (($entity->getHealth() - $event->getFinalDamage()) < 0) {
                             $event->setCancelled();
 
-                            $entitySession->removePlayer($entity, true);
+                            if ($mode instanceof StickDuels) {
+                                $mode->getPos($entity);
+                            } else {
+                                $entitySession->removePlayer($entity, true);
                         }
                     }
                 }
