@@ -32,7 +32,6 @@ final class GameManager {
      */
     public function killGame(GameData $gameData): void {
         unset($this->games[spl_object_id($gameData)]);
-        var_dump($this->games);
     }
 
     /**
