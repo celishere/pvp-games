@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace grpe\pvp\listener;
 
 use grpe\pvp\Main;
+use grpe\pvp\game\TeamMode;
 use grpe\pvp\game\GameSession;
 use grpe\pvp\game\mode\StickDuels;
 use grpe\pvp\game\mode\ClassicDuels;
@@ -92,6 +93,9 @@ class PvPListener implements Listener {
         }
     }
 
+    /**
+     * @param EntityDamageEvent $event
+     */
     public function onDamage(EntityDamageEvent $event): void {
         $entity = $event->getEntity();
 
@@ -108,6 +112,13 @@ class PvPListener implements Listener {
                         $damagerSession = Main::getGameManager()->getPlayerSession($damager);
 
                         if ($damagerSession instanceof GameSession) {
+                            if ($mode instanceof TeamMode) {
+                                if ($mode->getPlayerTeam($damager) === $mode->getPlayerTeam($entity)) {
+                                    $event->setCancelled();
+                                    return;
+                                }
+                            }
+
                             if ($mode instanceof ClassicDuels) {
                                 if (($entity->getHealth() - $event->getFinalDamage()) < 0) {
                                     $event->setCancelled();

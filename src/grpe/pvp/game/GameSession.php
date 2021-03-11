@@ -13,8 +13,11 @@ use grpe\pvp\game\stages\EndingStage;
 
 use grpe\pvp\game\mode\StickDuels;
 use grpe\pvp\game\mode\ClassicDuels;
+use grpe\pvp\game\mode\SumoDuels;
 
 use grpe\pvp\player\PlayerData;
+
+use grpe\pvp\event\PvPJoinEvent;
 
 use pocketmine\Player;
 use pocketmine\Server;
@@ -126,6 +129,8 @@ final class GameSession {
                 return new StickDuels($this);
             case 'classic':
                 return new ClassicDuels($this);
+            case 'sumo':
+                return new SumoDuels($this);
         }
     }
 
@@ -133,7 +138,7 @@ final class GameSession {
      * @param Player $player
      */
     public function addPlayer(Player $player): void {
-        $this->players[$player->getUniqueId()->toString()] = $player;
+        $this->players[$player->getLowerCaseName()] = $player;
 
         $manager = Main::getPlayerDataManager();
         $data = $manager->getPlayerData($player);
@@ -150,6 +155,8 @@ final class GameSession {
         $player->teleport($pos);
 
         $player->sendMessage(TextFormat::GREEN. 'Присоединился.');
+
+        Main::getInstance()->getServer()->getPluginManager()->callEvent(new PvPJoinEvent($player, $this->mode));
     }
 
     /**
@@ -163,28 +170,28 @@ final class GameSession {
             }
 
             foreach ($this->getPlayers() as $players) {
-                $players->sendMessage($player->getName() .' вышел.');
+                $players->sendMessage(TextFormat::colorize('&b'. $player->getName() .' &fвышел.'));
             }
         } else {
             foreach ($this->getPlayers() as $players) {
-                $players->sendMessage($player->getName() .' убит.');
+                $players->sendMessage(TextFormat::colorize('&b'. $player->getName() .' &fубит.'));
             }
 
             $player->setGamemode(3);
         }
 
-        unset($this->players[$player->getUniqueId()->toString()]);
+        unset($this->players[$player->getLowerCaseName()]);
 
         Main::getPlayerDataManager()->unregisterPlayer($player);
 
         if ($this->getStage() instanceof RunningStage) {
             $mode = $this->getMode();
 
-            if ($mode instanceof TeamMode) {
+            if ($mode instanceof BasicDuels) {
                 $teamId = $mode->getPlayerTeam($player);
 
                 if ($teamId !== null) {
-                    unset($mode->getTeams()[$teamId][$player->getUniqueId()->toString()]);
+                    unset($mode->getTeams()[$teamId][$player->getLowerCaseName()]);
 
                     if (count($mode->getTeams()[$teamId]) < 1) {
                         $this->setStage(self::ENDING_STAGE);
@@ -222,13 +229,21 @@ final class GameSession {
         $this->setStage(self::WAITING_STAGE);
 
         if ($this->getLevel()->unload()) {
-            if (Server::getInstance()->loadLevel($this->getData()->getWorld())) {
-                var_dump(2);
+            if (!Server::getInstance()->loadLevel($this->getData()->getWorld())) {
+                Main::getGameManager()->killGame($this->getData());
             }
         }
     }
 
     public function tick(): void {
         $this->getStage()->onTick();
+
+        if ($this->getMode() instanceof SumoDuels) {
+            foreach ($this->getPlayers() as $player) {
+                if ($player->getY() < 0) { //задать значение в конфиге?
+                    $this->removePlayer($player, true);
+                }
+            }
+        }
     }
 }

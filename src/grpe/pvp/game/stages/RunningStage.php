@@ -4,9 +4,10 @@ declare(strict_types=1);
 
 namespace grpe\pvp\game\stages;
 
-use grpe\pvp\game\GameSession;
-use grpe\pvp\game\mode\StickDuels;
 use grpe\pvp\game\Stage;
+use grpe\pvp\game\GameSession;
+
+use grpe\pvp\game\mode\StickDuels;
 
 use pocketmine\utils\TextFormat;
 

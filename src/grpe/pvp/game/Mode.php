@@ -18,6 +18,8 @@ use pocketmine\math\Vector3;
  */
 abstract class Mode {
 
+    protected array $teams = [0 => [], 1 => []];
+
     /**
      * @return GameSession
      */
@@ -39,4 +41,15 @@ abstract class Mode {
      * @param int $stageId
      */
     abstract public function onStageChange(int $stageId): void;
+
+    /**
+     * @return array
+     */
+    abstract public function getTeams(): array;
+
+    /**
+     * @param Player $player
+     * @return int|null
+     */
+    abstract public function getPlayerTeam(Player $player): ?int;
 }

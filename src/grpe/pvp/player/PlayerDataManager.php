@@ -25,18 +25,18 @@ class PlayerDataManager {
      * @return PlayerData
      */
     public function registerPlayer(Player $player): PlayerData {
-        return $this->playersData[$player->getUniqueId()->toString()] = new PlayerData();
+        return $this->playersData[$player->getLowerCaseName()] = new PlayerData();
     }
 
     /**
      * @param Player $player
      */
     public function unregisterPlayer(Player $player): void {
-        unset($this->playersData[$player->getUniqueId()->toString()]);
+        unset($this->playersData[$player->getLowerCaseName()]);
     }
 
     public function getPlayerData(Player $player): ?PlayerData {
-        return isset($this->playersData[$player->getUniqueId()->toString()]) ? $this->playersData[$player->getUniqueId()->toString()] : null;
+        return isset($this->playersData[$player->getLowerCaseName()]) ? $this->playersData[$player->getLowerCaseName()] : null;
     }
 
 }

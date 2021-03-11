@@ -28,6 +28,14 @@ final class GameManager {
     }
 
     /**
+     * @param GameData $gameData
+     */
+    public function killGame(GameData $gameData): void {
+        unset($this->games[spl_object_id($gameData)]);
+        var_dump($this->games);
+    }
+
+    /**
      * @return GameSession[]
      */
     public function getGames(): array {
@@ -39,10 +47,10 @@ final class GameManager {
      * @return GameSession|null
      */
     public function getPlayerSession(Player $player): ?GameSession {
-        $uuid = $player->getUniqueId()->toString(); //на 1.1 хранение игроков по uuid может не прокатить
+        $name = $player->getLowerCaseName();
 
         foreach ($this->games as $gameSession) {
-            if (isset($gameSession->getPlayers()[$uuid])) {
+            if (isset($gameSession->getPlayers()[$name])) {
                 return $gameSession;
             }
         }
