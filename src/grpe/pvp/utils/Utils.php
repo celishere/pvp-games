@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace grpe\pvp\utils;
 
+use pocketmine\level\Level;
 use pocketmine\math\Vector3;
 
 use InvalidArgumentException;
@@ -59,5 +60,24 @@ class Utils {
         }
 
         throw new InvalidArgumentException('Неккоректная локация.');
+    }
+
+    /**
+     * @param int $x
+     * @param int $y
+     * @param int $z
+     *
+     * @return string
+     */
+    public static function packXYZ(int $x, int $y, int $z): string {
+        return $x .':'. $y .':'. $z;
+    }
+
+    /**
+     * @param string $packedXYZ
+     * @return array
+     */
+    public static function unpackXYZ(string $packedXYZ): array {
+        return explode(':', $packedXYZ);
     }
 }
