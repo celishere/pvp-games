@@ -5,20 +5,21 @@ declare(strict_types=1);
 namespace grpe\pvp\listener;
 
 use grpe\pvp\Main;
-use grpe\pvp\game\TeamMode;
+
 use grpe\pvp\game\GameSession;
+
 use grpe\pvp\game\mode\StickDuels;
 use grpe\pvp\game\mode\ClassicDuels;
 
 use pocketmine\event\Listener;
 
+use pocketmine\event\player\PlayerJoinEvent;
+use pocketmine\event\player\PlayerQuitEvent;
+
 use pocketmine\event\entity\EntityDamageByEntityEvent;
 use pocketmine\event\entity\EntityDamageEvent;
 
 use pocketmine\event\block\BlockBreakEvent;
-
-use pocketmine\event\player\PlayerJoinEvent;
-use pocketmine\event\player\PlayerQuitEvent;
 
 use pocketmine\block\Bed;
 use pocketmine\tile\Bed as TileBed;
@@ -60,15 +61,15 @@ class PvPListener implements Listener {
         $player = $event->getPlayer();
         $block = $event->getBlock();
 
-        if ($block instanceof Bed) {
-            $gameSession = Main::getGameManager()->getPlayerSession($player);
+        $gameSession = Main::getGameManager()->getPlayerSession($player);
 
-            if ($gameSession instanceof GameSession) {
-                $event->setCancelled();
-                $mode = $gameSession->getMode();
+        if ($gameSession instanceof GameSession) {
+            $mode = $gameSession->getMode();
 
-                if ($mode instanceof StickDuels) {
-                    $level = $block->getLevelNonNull(); // $level = $player->getLevel();
+            if ($mode instanceof StickDuels) {
+                if ($block instanceof Bed) {
+                    $event->setCancelled();
+                    $level = $block->getLevel();
 
                     if ($block->isHeadPart()) {
                         $bed = $level->getTile($block);
@@ -82,12 +83,14 @@ class PvPListener implements Listener {
 
                     if ($teamId === $bedTeamId) {
                         foreach ($gameSession->getPlayers() as $sessionPlayers) {
-                            $sessionPlayers->sendMessage(TextFormat::colorize('&a'. $player->getName() .' &fсломал кровать вражеской команды.'));
+                            $sessionPlayers->sendMessage(TextFormat::colorize('&a' . $player->getName() . ' &fсломал кровать вражеской команды.'));
                         }
 
                         $mode->addScore($teamId);
                         $mode->resetMap();
                     }
+                } else {
+                    $mode->addCachedBlock($block->getX(), $block->getY(), $block->getZ(), $block->getId(), $block->getDamage());
                 }
             }
         }
@@ -112,11 +115,9 @@ class PvPListener implements Listener {
                         $damagerSession = Main::getGameManager()->getPlayerSession($damager);
 
                         if ($damagerSession instanceof GameSession) {
-                            if ($mode instanceof TeamMode) {
-                                if ($mode->getPlayerTeam($damager) === $mode->getPlayerTeam($entity)) {
-                                    $event->setCancelled();
-                                    return;
-                                }
+                            if ($mode->getPlayerTeam($damager) === $mode->getPlayerTeam($entity)) {
+                                $event->setCancelled();
+                                return;
                             }
 
                             if ($mode instanceof ClassicDuels) {
@@ -124,19 +125,19 @@ class PvPListener implements Listener {
                                     $event->setCancelled();
 
                                     $entitySession->removePlayer($entity, true);
-                                    $damager->sendMessage(TextFormat::RED . 'Kill!');
+                                    $damager->sendMessage(TextFormat::RED. 'Kill!');
                                 }
                             }
                         }
                     }
                 } else {
-                        if (($entity->getHealth() - $event->getFinalDamage()) < 0) {
-                            $event->setCancelled();
+                    if (($entity->getHealth() - $event->getFinalDamage()) < 0) {
+                        $event->setCancelled();
 
-                            if ($mode instanceof StickDuels) {
-                                $mode->getPos($entity);
-                            } else {
-                                $entitySession->removePlayer($entity, true);
+                        if ($mode instanceof StickDuels) {
+                            $mode->getPos($entity);
+                        } else {
+                            $entitySession->removePlayer($entity, true);
                         }
                     }
                 }

@@ -97,11 +97,7 @@ class StickDuels extends BasicDuels {
     public function resetMap(): void {
         $session = $this->getSession();
 
-        $session->getLevel()->unloadChunks(true);
-
-        foreach ($session->getLevel()->getChunks() as $chunk) {
-            $chunk->onUnload();
-        }
+        Main::getInstance()->getScheduler()->scheduleRepeatingTask(new RemoveCachedBlocks($this), 1);
 
         foreach ($session->getPlayers() as $player) {
             $player->teleport($session->getData()->getWaitingRoom());
