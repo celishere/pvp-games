@@ -11,6 +11,7 @@ use grpe\pvp\game\GameSession;
 use grpe\pvp\game\mode\StickDuels;
 use grpe\pvp\game\mode\ClassicDuels;
 
+use pocketmine\event\block\BlockPlaceEvent;
 use pocketmine\event\Listener;
 
 use pocketmine\event\player\PlayerJoinEvent;
@@ -55,6 +56,26 @@ class PvPListener implements Listener {
     }
 
     /**
+     * @param BlockPlaceEvent $event
+     */
+    public function onPlace(BlockPlaceEvent $event): void {
+        $player = $event->getPlayer();
+        $block = $event->getBlock();
+
+        $gameSession = Main::getGameManager()->getPlayerSession($player);
+
+        if ($gameSession instanceof GameSession) {
+            $mode = $gameSession->getMode();
+
+            if ($mode instanceof StickDuels) {
+                if (!$mode->isBlockCached($block->getX(), $block->getY(), $block->getZ())) {
+                    $mode->addCachedBlock($block->getX(), $block->getY(), $block->getZ(), $block->getId(), $block->getDamage());
+                }
+            }
+        }
+    }
+
+    /**
      * @param BlockBreakEvent $event
      */
     public function onBreak(BlockBreakEvent $event): void {
@@ -90,7 +111,9 @@ class PvPListener implements Listener {
                         $mode->resetMap();
                     }
                 } else {
-                    $mode->addCachedBlock($block->getX(), $block->getY(), $block->getZ(), $block->getId(), $block->getDamage());
+                    if (!$mode->isBlockCached($block->getX(), $block->getY(), $block->getZ())) {
+                        $mode->addCachedBlock($block->getX(), $block->getY(), $block->getZ(), $block->getId(), $block->getDamage());
+                    }
                 }
             }
         }
