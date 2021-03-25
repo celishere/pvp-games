@@ -21,16 +21,16 @@ final class GameManager {
     private array $games = [];
 
     /**
-     * @param GameData $gameData
+     * @param GameData|FFAGameData $gameData
      */
-    public function addGame(GameData $gameData): void {
+    public function addGame($gameData): void {
         $this->games[spl_object_id($gameData)] = new GameSession($gameData);
     }
 
     /**
-     * @param GameData $gameData
+     * @param GameData|FFAGameData $gameData
      */
-    public function killGame(GameData $gameData): void {
+    public function killGame($gameData): void {
         unset($this->games[spl_object_id($gameData)]);
     }
 

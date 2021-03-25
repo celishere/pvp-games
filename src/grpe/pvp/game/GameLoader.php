@@ -51,41 +51,43 @@ final class GameLoader {
                     continue;
                 }
 
-                $team = $arenaData["isTeam"] ?? null;
-                if($team === null) {
-                    $logger->warning("Тип арены не указан. Имя арены - $name");
-                    continue;
-                }
+                if ($mode !== "ffa") {
+                    $team = $arenaData["isTeam"] ?? null;
+                    if ($team === null) {
+                        $logger->warning("Тип арены не указан. Имя арены - $name");
+                        continue;
+                    }
 
-                $countdown = $arenaData["countdown"] ?? null;
-                if($countdown === null) {
-                    $logger->warning("Countdown арены не указано. Имя арены - $name.");
-                    continue;
-                }
+                    $countdown = $arenaData["countdown"] ?? null;
+                    if ($countdown === null) {
+                        $logger->warning("Countdown арены не указано. Имя арены - $name.");
+                        continue;
+                    }
 
-                $minPlayers = $arenaData["minPlayers"] ?? null;
-                if($minPlayers === null) {
-                    $logger->warning("Мин. кол-во игроков арены не указано. Имя арены - $name.");
-                    continue;
-                }
+                    $minPlayers = $arenaData["minPlayers"] ?? null;
+                    if ($minPlayers === null) {
+                        $logger->warning("Мин. кол-во игроков арены не указано. Имя арены - $name.");
+                        continue;
+                    }
 
-                $maxPlayers = $arenaData["maxPlayers"] ?? null;
-                if($maxPlayers === null) {
-                    $logger->warning("Макс. кол-во игроков арены не указано. Имя арены - $name.");
-                    continue;
-                }
+                    $maxPlayers = $arenaData["maxPlayers"] ?? null;
+                    if ($maxPlayers === null) {
+                        $logger->warning("Макс. кол-во игроков арены не указано. Имя арены - $name.");
+                        continue;
+                    }
 
-                $waitingRoomRaw = $arenaData["waitingRoom"] ?? null;
-                if($waitingRoomRaw === null) {
-                    $logger->warning("Точка ожидания не указана. Имя арены - $name.");
-                    continue;
-                }
+                    $waitingRoomRaw = $arenaData["waitingRoom"] ?? null;
+                    if ($waitingRoomRaw === null) {
+                        $logger->warning("Точка ожидания не указана. Имя арены - $name.");
+                        continue;
+                    }
 
-                try {
-                    $waitingRoom = Utils::unpackRawVector($waitingRoomRaw);
-                } catch (InvalidArgumentException $e) {
-                    $logger->warning("Была указана некорректная локация. Имя арены - $name.");
-                    continue;
+                    try {
+                        $waitingRoom = Utils::unpackRawVector($waitingRoomRaw);
+                    } catch (InvalidArgumentException $e) {
+                        $logger->warning("Была указана некорректная локация. Имя арены - $name.");
+                        continue;
+                    }
                 }
 
                 $pos1Raw = $arenaData["pos1"] ?? null;
@@ -114,7 +116,11 @@ final class GameLoader {
                     continue;
                 }
 
-                $gameData = new GameData($name, $mode, $world, $team, $countdown, $maxPlayers, $minPlayers, $waitingRoom, $pos1, $pos2);
+                if ($mode === "ffa") {
+                    $gameData = new FFAGameData($name, $mode, $world, $pos1, $pos2);
+                } else {
+                    $gameData = new GameData($name, $mode, $world, $team, $countdown, $maxPlayers, $minPlayers, $waitingRoom, $pos1, $pos2);
+                }
 
                 if (!Server::getInstance()->loadLevel($world)) {
                     $logger->warning("Мир не существует. Имя арены - $name.");

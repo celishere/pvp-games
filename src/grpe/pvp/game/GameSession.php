@@ -43,7 +43,9 @@ final class GameSession {
 
     protected GameData $data;
     protected Stage $stage;
-    protected Mode $mode;
+
+    /** @var FFAMode|Mode */
+    protected $mode;
 
     public const WAITING_STAGE = 0;
     public const COUNTDOWN_STAGE = 1;
@@ -52,13 +54,15 @@ final class GameSession {
 
     /**
      * Game constructor.
-     * @param GameData $gameData
+     * @param GameData|FFAGameData $gameData
      */
-    public function __construct(GameData $gameData) {
+    public function __construct($gameData) {
         $this->data = $gameData;
         $this->mode = $this->getModeById($gameData->getMode());
 
-        $this->setStage(self::WAITING_STAGE);
+        if ($gameData->getMode() !== 'ffa') {
+            $this->setStage(self::WAITING_STAGE);
+        }
     }
 
     /**
@@ -111,18 +115,18 @@ final class GameSession {
     }
 
     /**
-     * @return Mode
+     * @return Mode|FFAMode
      */
-    public function getMode(): Mode {
+    public function getMode() {
         return $this->mode;
     }
 
     /**
      * @param string $id
      *
-     * @return Mode
+     * @return Mode|FFAMode
      */
-    public function getModeById(string $id): Mode {
+    public function getModeById(string $id) {
         switch ($id) {
             default:
             case 'stick':
@@ -131,6 +135,8 @@ final class GameSession {
                 return new ClassicDuels($this);
             case 'sumo':
                 return new SumoDuels($this);
+            case 'ffa':
+                return new BasicFFA($this);
         }
     }
 
@@ -236,12 +242,14 @@ final class GameSession {
     }
 
     public function tick(): void {
-        $this->getStage()->onTick();
+        if (!$this->getMode() instanceof FFAMode) {
+            $this->getStage()->onTick();
 
-        if ($this->getMode() instanceof SumoDuels) {
-            foreach ($this->getPlayers() as $player) {
-                if ($player->getY() < 0) { //задать значение в конфиге?
-                    $this->removePlayer($player, true);
+            if ($this->getMode() instanceof SumoDuels) {
+                foreach ($this->getPlayers() as $player) {
+                    if ($player->getY() < 0) { //задать значение в конфиге?
+                        $this->removePlayer($player, true);
+                    }
                 }
             }
         }
