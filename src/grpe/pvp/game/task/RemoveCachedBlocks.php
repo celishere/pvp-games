@@ -106,6 +106,7 @@ class RemoveCachedBlocks extends Task {
             Main::getInstance()->getScheduler()->cancelTask($this->getTaskId());
 
             $time = round(microtime(true) - $this->startTime, 4);
+
             Main::getInstance()->getLogger()->info("(StickDuels) Заполнение блоков было выполнено за ". $time ."с., заполнено ". $this->totalCount ." блоков.");
             return;
         }

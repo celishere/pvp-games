@@ -111,8 +111,8 @@ class PvPListener implements Listener {
                         $mode->resetMap();
                     }
                 } else {
-                    if (!$mode->isBlockCached($block->getX(), $block->getY(), $block->getZ())) {
-                        $mode->addCachedBlock($block->getX(), $block->getY(), $block->getZ(), $block->getId(), $block->getDamage());
+                    if ($mode->isBlockCached($block->getX(), $block->getY(), $block->getZ())) {
+                        $mode->removeCachedBlock($block->getX(), $block->getY(), $block->getZ());
                     }
                 }
             }
