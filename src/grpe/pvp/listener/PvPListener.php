@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace grpe\pvp\listener;
 
+use grpe\pvp\game\FFAMode;
 use grpe\pvp\Main;
 
 use grpe\pvp\game\GameSession;
@@ -143,7 +144,7 @@ class PvPListener implements Listener {
                                 return;
                             }
 
-                            if ($mode instanceof ClassicDuels) {
+                            if ($mode instanceof ClassicDuels or $mode instanceof FFAMode) {
                                 if (($entity->getHealth() - $event->getFinalDamage()) < 0) {
                                     $event->setCancelled();
 

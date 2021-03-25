@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace grpe\pvp\game;
 
 use pocketmine\Player;
+
 use pocketmine\math\Vector3;
 
 /**

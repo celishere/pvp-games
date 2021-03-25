@@ -8,6 +8,7 @@ use grpe\pvp\game\GameLoader;
 use grpe\pvp\game\GameManager;
 use grpe\pvp\game\task\GameSessionsTask;
 
+use grpe\pvp\lang\LanguageFactory;
 use grpe\pvp\listener\PvPListener;
 
 use grpe\pvp\player\PlayerDataManager;
@@ -36,6 +37,8 @@ class Main extends PluginBase {
     private static PlayerDataManager $playerDataManager;
 
     public function onLoad(): void {
+        new LanguageFactory();
+
         self::$instance           = $this;
         self::$gameManager        = new GameManager();
         self::$playerDataManager  = new PlayerDataManager();

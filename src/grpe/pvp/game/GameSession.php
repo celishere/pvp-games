@@ -190,9 +190,9 @@ final class GameSession {
 
         Main::getPlayerDataManager()->unregisterPlayer($player);
 
-        if ($this->getStage() instanceof RunningStage) {
-            $mode = $this->getMode();
+        $mode = $this->getMode();
 
+        if ($this->getStage() instanceof RunningStage) {
             if ($mode instanceof BasicDuels) {
                 $teamId = $mode->getPlayerTeam($player);
 
@@ -208,6 +208,8 @@ final class GameSession {
                     }
                 }
             }
+        } else if ($mode instanceof FFAMode) {
+            $player->teleport($mode->getPos());
         }
     }
 

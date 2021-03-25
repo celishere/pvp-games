@@ -4,7 +4,10 @@ declare(strict_types=1);
 
 namespace grpe\pvp\game;
 
+use pocketmine\Player;
+
 use pocketmine\item\Item;
+
 use pocketmine\math\Vector3;
 
 /**
@@ -34,4 +37,9 @@ abstract class FFAMode {
      * @return Item[]
      */
     abstract public function getItems(): array;
+
+    /**
+     * @param Player $player
+     */
+    abstract public function respawnPlayer(Player $player): void;
 }
