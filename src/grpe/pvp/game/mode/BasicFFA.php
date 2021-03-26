@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace grpe\pvp\game\mode;
 
 use grpe\pvp\game\GameSession;
+
 use pocketmine\math\Vector3;
+
 use pocketmine\Player;
 
 /**
@@ -35,8 +37,8 @@ abstract class BasicFFA extends FFAMode {
     public function getPos(): Vector3 {
         $data = $this->getSession()->getData();
 
-        $pos1 = $data->getPos1();
-        $pos2 = $data->getPos2();
+        $pos1 = $data->getPos1()->floor();
+        $pos2 = $data->getPos2()->floor();
 
         $x = mt_rand($pos1->getX(), $pos2->getX());
         $z = mt_rand($pos1->getZ(), $pos2->getZ());
