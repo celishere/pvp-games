@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace grpe\pvp\game;
 
+use grpe\pvp\game\mode\Mode;
 use pocketmine\Player;
 
 /**
@@ -66,12 +67,16 @@ final class GameManager {
             $data = $game->getData();
 
             if ($data->getMode() === $mode) {
-                $stageId = $game->getStage()->getId();
+                if ($game->getMode() instanceof Mode) {
+                    $stageId = $game->getStage()->getId();
 
-                if ($stageId === GameSession::WAITING_STAGE or $stageId === GameSession::COUNTDOWN_STAGE) {
-                    if ($game->getPlayersCount() < $data->getMaxPlayers()) {
-                        return $game;
+                    if ($stageId === GameSession::WAITING_STAGE or $stageId === GameSession::COUNTDOWN_STAGE) {
+                        if ($game->getPlayersCount() < $data->getMaxPlayers()) {
+                            return $game;
+                        }
                     }
+                } else {
+                    return $game;
                 }
             }
         }

@@ -62,10 +62,12 @@ final class GameSession {
      * @param GameData|FFAGameData $gameData
      */
     public function __construct($gameData) {
+        var_dump($gameData);
+
         $this->data = $gameData;
         $this->mode = $this->getModeById($gameData->getMode());
 
-        if ($gameData->getMode() !== 'ffa') {
+        if (!$gameData instanceof FFAGameData) {
             $this->setStage(self::WAITING_STAGE);
         }
     }
@@ -162,10 +164,15 @@ final class GameSession {
 
         $data->setSession($this);
 
-        /** Я без понятия, если дать заранее локацию, то после сбросы арены игрока перестанет переносить */
-        $w = $this->getData()->getWaitingRoom();
-        $pos = new Location($w->getX(), $w->getY(), $w->getZ(), 0.0, 0.0, $this->getLevel());
-        $player->teleport($pos);
+        if ($this->getMode() instanceof FFAMode) {
+            $this->getMode()->respawnPlayer($player);
+        } else {
+            /** Я без понятия, если дать заранее локацию, то после сбросы арены игрока перестанет переносить */
+            $w = $this->getData()->getWaitingRoom();
+
+            $pos = new Location($w->getX(), $w->getY(), $w->getZ(), 0.0, 0.0, $this->getLevel());
+            $player->teleport($pos);
+        }
 
         $player->sendMessage(TextFormat::GREEN. 'Присоединился.');
 

@@ -42,7 +42,7 @@ class JoinCommand extends Command {
      */
     public function execute(CommandSender $sender, string $commandLabel, array $args): bool {
         if ($sender instanceof Player) {
-            $gameSession = Main::getGameManager()->findGameByMode('stick');
+            $gameSession = Main::getGameManager()->findGameByMode('ffa');
 
             if ($gameSession instanceof GameSession) {
                 $gameSession->addPlayer($sender);
