@@ -4,9 +4,8 @@ declare(strict_types=1);
 
 namespace grpe\pvp\game\task;
 
+use grpe\pvp\game\mode\modes\StickDuels;
 use grpe\pvp\Main;
-
-use grpe\pvp\game\mode\StickDuels;
 
 use grpe\pvp\utils\Utils;
 
@@ -98,7 +97,7 @@ class RemoveCachedBlocks extends Task {
         $part = $this->parts[$this->i++];
 
         foreach ($part as $block){
-            $this->level->setBlock($block, $block);
+            $this->level->setBlock(Block::get(Block::AIR), $block);
             $this->totalCount++;
         }
 
