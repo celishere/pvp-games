@@ -97,7 +97,7 @@ class RemoveCachedBlocks extends Task {
         $part = $this->parts[$this->i++];
 
         foreach ($part as $block){
-            $this->level->setBlock(Block::get(Block::AIR), $block);
+            $this->level->setBlock($block, Block::get(Block::AIR));
             $this->totalCount++;
         }
 
