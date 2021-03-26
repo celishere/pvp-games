@@ -26,7 +26,7 @@ class LanguageFactory {
     private static array $languages = [];
 
     /** @var string[] */
-    private static array $langsAvailable = [
+    private static array $langAvailable = [
         "en_us",
         "ru_ru"
     ];
@@ -44,7 +44,7 @@ class LanguageFactory {
             self::$languages[$language] = $lang;
         }
 
-        if(!in_array(Main::getInstance()->getConfig()->get("language"), self::$langsAvailable, true)){
+        if(!in_array(Main::getInstance()->getConfig()->get("language"), self::$langAvailable, true)){
             self::$language = new Language(self::FALLBACK);
 
             Main::getInstance()->getLogger()->alert(self::getDefaultLanguage()->translateString("language.not.found",
@@ -59,7 +59,7 @@ class LanguageFactory {
      * @return string[]
      */
     public static function getAvailableLanguages(): array {
-        return self::$langsAvailable;
+        return self::$langAvailable;
     }
 
     /**
@@ -81,7 +81,7 @@ class LanguageFactory {
      * @return bool
      */
     public function isAvailable(string $language): bool {
-        return in_array($language, self::$langsAvailable, true);
+        return in_array($language, self::$langAvailable, true);
     }
 
     /**

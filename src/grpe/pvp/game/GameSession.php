@@ -62,8 +62,6 @@ final class GameSession {
      * @param GameData|FFAGameData $gameData
      */
     public function __construct($gameData) {
-        var_dump($gameData);
-
         $this->data = $gameData;
         $this->mode = $this->getModeById($gameData->getMode());
 
@@ -182,48 +180,60 @@ final class GameSession {
     /**
      * @param Player $player
      * @param bool $killed
+     * @param string|null $deathMessage
      */
-    public function removePlayer(Player $player, bool $killed = false): void {
+    public function removePlayer(Player $player, bool $killed = false, string $deathMessage = null): void {
+        var_dump($player->getName());
+        $player->setHealth(20);
+
         if (!$killed) {
             if ($player->isOnline()) {
                 $player->teleport(Server::getInstance()->getDefaultLevel()->getSpawnLocation());
             }
 
             foreach ($this->getPlayers() as $players) {
-                $players->sendMessage(TextFormat::colorize('&b'. $player->getName() .' &fвышел.'));
+                $players->sendMessage(TextFormat::colorize('&b' . $player->getName() . ' &fвышел.'));
             }
         } else {
             foreach ($this->getPlayers() as $players) {
-                $players->sendMessage(TextFormat::colorize('&b'. $player->getName() .' &fубит.'));
+                if ($deathMessage !== null) {
+                    $players->sendMessage(TextFormat::colorize($deathMessage));
+                } else {
+                    $players->sendMessage(TextFormat::colorize('&b' . $player->getName() . ' &fубит.'));
+                }
             }
-
-            $player->setGamemode(3);
         }
-
-        unset($this->players[$player->getLowerCaseName()]);
-
-        Main::getPlayerDataManager()->unregisterPlayer($player);
 
         $mode = $this->getMode();
 
-        if ($this->getStage() instanceof RunningStage) {
-            if ($mode instanceof BasicDuels) {
-                $teamId = $mode->getPlayerTeam($player);
+        if ($mode instanceof FFAMode) {
+            $player->sendMessage('Респавн...');
 
-                if ($teamId !== null) {
-                    unset($mode->getTeams()[$teamId][$player->getLowerCaseName()]);
+            $mode->respawnPlayer($player);
+        } else {
+            $player->setGamemode(3);
 
-                    if (count($mode->getTeams()[$teamId]) < 1) {
-                        $this->setStage(self::ENDING_STAGE);
+            unset($this->players[$player->getLowerCaseName()]);
 
-                        foreach ($this->getPlayers() as $players) {
-                            $players->sendMessage('Игра окончена.');
+            Main::getPlayerDataManager()->unregisterPlayer($player);
+
+            if ($this->getStage() instanceof RunningStage) {
+                if ($mode instanceof BasicDuels) {
+                    $teamId = $mode->getPlayerTeam($player);
+
+                    if ($teamId !== null) {
+                        unset($mode->getTeams()[$teamId][$player->getLowerCaseName()]);
+
+                        if (count($mode->getTeams()[$teamId]) < 1) {
+                            $this->setStage(self::ENDING_STAGE);
+
+                            foreach ($this->getPlayers() as $players) {
+                                $players->sendMessage('Игра окончена.');
+                            }
                         }
                     }
                 }
             }
-        } else if ($mode instanceof FFAMode) {
-            $player->teleport($mode->getPos());
         }
     }
 

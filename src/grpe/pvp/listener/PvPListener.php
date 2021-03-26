@@ -73,6 +73,8 @@ class PvPListener implements Listener {
                 if (!$mode->isBlockCached($block->getX(), $block->getY(), $block->getZ())) {
                     $mode->addCachedBlock($block->getX(), $block->getY(), $block->getZ(), $block->getId(), $block->getDamage());
                 }
+            } else {
+                $event->setCancelled();
             }
         }
     }
@@ -119,6 +121,8 @@ class PvPListener implements Listener {
                         $event->setCancelled();
                     }
                 }
+            } else {
+                $event->setCancelled();
             }
         }
     }
@@ -149,16 +153,20 @@ class PvPListener implements Listener {
                         $damagerSession = Main::getGameManager()->getPlayerSession($damager);
 
                         if ($damagerSession instanceof GameSession) {
-                            if ($mode->getPlayerTeam($damager) === $mode->getPlayerTeam($entity)) {
-                                $event->setCancelled();
-                                return;
+                            if (!$mode instanceof FFAMode) {
+                                if ($mode->getPlayerTeam($damager) === $mode->getPlayerTeam($entity)) {
+                                    $event->setCancelled();
+                                    return;
+                                }
                             }
 
                             if ($mode instanceof ClassicDuels or $mode instanceof FFAMode) {
-                                if (($entity->getHealth() - $event->getFinalDamage()) < 0) {
+                                if (($entity->getHealth() - $event->getFinalDamage()) <= 0) {
                                     $event->setCancelled();
 
-                                    $entitySession->removePlayer($entity, true);
+                                    $deathMessage = '&b'. $entity->getName() . ' &fбыл убит &e'. $damager->getName();
+                                    $entitySession->removePlayer($entity, true, $deathMessage);
+
                                     $damager->sendMessage(TextFormat::RED. 'Kill!');
                                 }
                             }
@@ -169,7 +177,7 @@ class PvPListener implements Listener {
                         $event->setCancelled();
 
                         if ($mode instanceof StickDuels) {
-                            $mode->getPos($entity);
+                            $entity->teleport($mode->getPos($entity));
                         } else {
                             $entitySession->removePlayer($entity, true);
                         }
