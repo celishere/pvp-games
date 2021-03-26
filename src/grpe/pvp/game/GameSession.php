@@ -46,7 +46,7 @@ final class GameSession {
     /** @var Player[] */
     protected array $players = [];
 
-    protected GameData $data;
+    protected $data;
     protected Stage $stage;
 
     /** @var FFAMode|Mode */
@@ -71,9 +71,9 @@ final class GameSession {
     }
 
     /**
-     * @return GameData
+     * @return GameData|FFAGameData
      */
-    public function getData(): GameData {
+    public function getData() {
         return $this->data;
     }
 
@@ -150,6 +150,8 @@ final class GameSession {
      */
     public function addPlayer(Player $player): void {
         $this->players[$player->getLowerCaseName()] = $player;
+
+        $player->sendMessage("Присоединяемся к арене ". $this->getData()->getName() ."...");
 
         $manager = Main::getPlayerDataManager();
         $data = $manager->getPlayerData($player);

@@ -4,15 +4,15 @@ declare(strict_types=1);
 
 namespace grpe\pvp\listener;
 
-use grpe\pvp\game\FFAMode;
 use grpe\pvp\Main;
 
 use grpe\pvp\game\GameSession;
 
-use grpe\pvp\game\mode\StickDuels;
-use grpe\pvp\game\mode\ClassicDuels;
+use grpe\pvp\game\mode\FFAMode;
+use grpe\pvp\game\mode\modes\StickDuels;
+use grpe\pvp\game\mode\modes\ClassicDuels;
 
-use pocketmine\event\block\BlockPlaceEvent;
+use pocketmine\event\block\BlockUpdateEvent;
 use pocketmine\event\Listener;
 
 use pocketmine\event\player\PlayerJoinEvent;
@@ -21,6 +21,7 @@ use pocketmine\event\player\PlayerQuitEvent;
 use pocketmine\event\entity\EntityDamageByEntityEvent;
 use pocketmine\event\entity\EntityDamageEvent;
 
+use pocketmine\event\block\BlockPlaceEvent;
 use pocketmine\event\block\BlockBreakEvent;
 
 use pocketmine\block\Bed;
@@ -100,10 +101,10 @@ class PvPListener implements Listener {
                     }
 
                     /** @var TileBed $bed */
-                    $bedTeamId = $bed->getColor();
+                    $bedColorId = $bed->getColor();
                     $teamId = $mode->getPlayerTeam($player);
 
-                    if ($teamId === $bedTeamId) {
+                    if ($teamId === $bedColorId) {
                         foreach ($gameSession->getPlayers() as $sessionPlayers) {
                             $sessionPlayers->sendMessage(TextFormat::colorize('&a' . $player->getName() . ' &fсломал кровать вражеской команды.'));
                         }
@@ -114,10 +115,19 @@ class PvPListener implements Listener {
                 } else {
                     if ($mode->isBlockCached($block->getX(), $block->getY(), $block->getZ())) {
                         $mode->removeCachedBlock($block->getX(), $block->getY(), $block->getZ());
+                    } else {
+                        $event->setCancelled();
                     }
                 }
             }
         }
+    }
+
+    /**
+     * @param BlockUpdateEvent $event
+     */
+    public function onUpdate(BlockUpdateEvent $event): void {
+        $event->setCancelled();
     }
 
     /**

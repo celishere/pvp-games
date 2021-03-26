@@ -7,7 +7,7 @@ namespace grpe\pvp\game\stages;
 use grpe\pvp\game\Stage;
 use grpe\pvp\game\GameSession;
 
-use grpe\pvp\game\mode\StickDuels;
+use grpe\pvp\game\mode\modes\StickDuels;
 
 use pocketmine\utils\TextFormat;
 
