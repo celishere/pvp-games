@@ -37,11 +37,11 @@ class Main extends PluginBase {
     private static PlayerDataManager $playerDataManager;
 
     public function onLoad(): void {
-        new LanguageFactory();
-
         self::$instance           = $this;
         self::$gameManager        = new GameManager();
         self::$playerDataManager  = new PlayerDataManager();
+
+        new LanguageFactory();
 
         Utils::createDirectory($this->getDataFolder(), 'arenas/');
 
