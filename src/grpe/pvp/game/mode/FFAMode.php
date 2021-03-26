@@ -44,4 +44,6 @@ abstract class FFAMode {
      * @param Player $player
      */
     abstract public function respawnPlayer(Player $player): void;
+
+    abstract public function tick(): void;
 }

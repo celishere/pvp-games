@@ -207,8 +207,6 @@ final class GameSession {
         $mode = $this->getMode();
 
         if ($mode instanceof FFAMode) {
-            $player->sendMessage('Респавн...');
-
             $mode->respawnPlayer($player);
         } else {
             $player->setGamemode(3);
@@ -268,7 +266,9 @@ final class GameSession {
     }
 
     public function tick(): void {
-        if (!$this->getMode() instanceof FFAMode) {
+        if ($this->getMode() instanceof FFAMode) {
+            $this->getMode()->tick();
+        } else {
             $this->getStage()->onTick();
 
             if ($this->getMode() instanceof SumoDuels) {
