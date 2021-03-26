@@ -2,17 +2,15 @@
 
 declare(strict_types=1);
 
-namespace grpe\pvp\game\mode;
+namespace grpe\pvp\game\mode\modes;
 
-use grpe\pvp\game\BasicDuels;
-use grpe\pvp\game\Mode;
-use grpe\pvp\game\GameSession;
-
-use grpe\pvp\game\task\RemoveCachedBlocks;
 use grpe\pvp\Main;
+
+use grpe\pvp\game\GameSession;
+use grpe\pvp\game\mode\BasicDuels;
+use grpe\pvp\game\task\RemoveCachedBlocks;
+
 use grpe\pvp\utils\Utils;
-use pocketmine\Player;
-use pocketmine\math\Vector3;
 
 /**
  * Class StickDuels

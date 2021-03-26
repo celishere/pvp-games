@@ -2,9 +2,11 @@
 
 declare(strict_types=1);
 
-namespace grpe\pvp\game;
+namespace grpe\pvp\game\mode;
 
+use grpe\pvp\game\GameSession;
 use pocketmine\math\Vector3;
+use pocketmine\Player;
 
 /**
  * Class BasicFFA
@@ -13,7 +15,7 @@ use pocketmine\math\Vector3;
  * @version 1.0.0
  * @since   1.0.0
  */
-class BasicFFA extends FFAMode {
+abstract class BasicFFA extends FFAMode {
 
     protected array $kills = [];
 
@@ -52,7 +54,10 @@ class BasicFFA extends FFAMode {
     /**
      * @return array
      */
-    public function getItems(): array {
-        return [];
-    }
+    abstract public function getItems(): array;
+
+    /**
+     * @param Player $player
+     */
+    abstract public function respawnPlayer(Player $player): void;
 }

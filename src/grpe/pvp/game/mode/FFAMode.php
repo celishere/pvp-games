@@ -2,7 +2,9 @@
 
 declare(strict_types=1);
 
-namespace grpe\pvp\game;
+namespace grpe\pvp\game\mode;
+
+use grpe\pvp\game\GameSession;
 
 use pocketmine\Player;
 

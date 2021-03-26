@@ -11,9 +11,14 @@ use grpe\pvp\game\stages\WaitingStage;
 use grpe\pvp\game\stages\RunningStage;
 use grpe\pvp\game\stages\EndingStage;
 
-use grpe\pvp\game\mode\StickDuels;
-use grpe\pvp\game\mode\ClassicDuels;
-use grpe\pvp\game\mode\SumoDuels;
+use grpe\pvp\game\mode\Mode;
+use grpe\pvp\game\mode\FFAMode;
+use grpe\pvp\game\mode\BasicDuels;
+
+use grpe\pvp\game\mode\modes\StickDuels;
+use grpe\pvp\game\mode\modes\ClassicDuels;
+use grpe\pvp\game\mode\modes\SumoDuels;
+use grpe\pvp\game\mode\modes\FFA;
 
 use grpe\pvp\player\PlayerData;
 
@@ -136,7 +141,7 @@ final class GameSession {
             case 'sumo':
                 return new SumoDuels($this);
             case 'ffa':
-                return new BasicFFA($this);
+                return new FFA($this);
         }
     }
 

@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace grpe\pvp\game\mode;
+namespace grpe\pvp\game\mode\modes;
 
-use grpe\pvp\game\BasicDuels;
+use grpe\pvp\game\mode\BasicDuels;
 use grpe\pvp\game\GameSession;
 
 use pocketmine\item\Item as I;

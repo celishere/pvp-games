@@ -2,7 +2,8 @@
 
 namespace grpe\pvp\event;
 
-use grpe\pvp\game\Mode;
+use grpe\pvp\game\mode\Mode;
+use grpe\pvp\game\mode\FFAMode;
 
 use pocketmine\Player;
 
@@ -20,14 +21,16 @@ use pocketmine\event\Event;
 class PvPJoinEvent extends Event {
 
     private Player $player;
-    private Mode $mode;
+
+    /** @var FFAMode|Mode */
+    private $mode;
 
     /**
      * PvPJoinEvent constructor.
      * @param Player $player
-     * @param Mode $mode
+     * @param Mode|FFAMode $mode
      */
-    public function __construct(Player $player, Mode $mode) {
+    public function __construct(Player $player, $mode) {
         $this->player = $player;
         $this->mode = $mode;
     }
@@ -40,9 +43,9 @@ class PvPJoinEvent extends Event {
     }
 
     /**
-     * @return Mode
+     * @return Mode|FFAMode
      */
-    public function getMode(): Mode {
+    public function getMode() {
         return $this->mode;
     }
 }
