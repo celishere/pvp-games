@@ -32,11 +32,16 @@ class PlayerDataManager {
      * @param Player $player
      */
     public function unregisterPlayer(Player $player): void {
+        //save to db
+
         unset($this->playersData[$player->getLowerCaseName()]);
     }
 
+    /**
+     * @param Player $player
+     * @return PlayerData|null
+     */
     public function getPlayerData(Player $player): ?PlayerData {
-        return isset($this->playersData[$player->getLowerCaseName()]) ? $this->playersData[$player->getLowerCaseName()] : null;
+        return $this->playersData[$player->getLowerCaseName()] ?? null;
     }
-
 }

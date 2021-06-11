@@ -15,4 +15,20 @@ namespace grpe\pvp\db;
  */
 class Request {
 
+    /**
+     * Request constructor.
+     */
+    public function __construct() {
+    }
+
+    public function set(): void {
+
+    }
+
+    /**
+     * @return array
+     */
+    public function get(): array {
+        return [];
+    }
 }

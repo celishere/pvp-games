@@ -9,13 +9,13 @@ use grpe\pvp\game\mode\BasicFFA;
 use pocketmine\Player;
 
 /**
- * Class FFA
+ * Class ClassicFFA
  * @package grpe\pvp\game\mode\modes
  *
  * @version 1.0.0
  * @since   1.0.0
  */
-class FFA extends BasicFFA {
+class ClassicFFA extends BasicFFA {
 
     /**
      * @return array

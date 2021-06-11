@@ -60,9 +60,10 @@ final class GameManager {
 
     /**
      * @param string $mode
+     * @param int $platform
      * @return GameSession|null
      */
-    public function findGameByMode(string $mode): ?GameSession {
+    public function findGame(string $mode, int $platform = 0): ?GameSession {
         foreach ($this->games as $game) {
             $data = $game->getData();
 
@@ -72,6 +73,12 @@ final class GameManager {
 
                     if ($stageId === GameSession::WAITING_STAGE or $stageId === GameSession::COUNTDOWN_STAGE) {
                         if ($game->getPlayersCount() < $data->getMaxPlayers()) {
+                            if ($game->getPlatform() !== 'all') {
+                                if ($game->getPlatform() != $platform) {
+                                    break;
+                                }
+                            }
+
                             return $game;
                         }
                     }
@@ -82,5 +89,23 @@ final class GameManager {
         }
 
         return null;
+    }
+
+    /**
+     * @param string $mode
+     * @return int
+     */
+    public function getOnline(string $mode): int {
+        $online = 0;
+
+        foreach ($this->games as $game) {
+            $data = $game->getData();
+
+            if ($data->getMode() === $mode) {
+                $online += $game->getPlayersCount();
+            }
+        }
+
+        return $online;
     }
 }

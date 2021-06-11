@@ -98,7 +98,10 @@ class StickDuels extends BasicDuels {
         Main::getInstance()->getScheduler()->scheduleRepeatingTask(new RemoveCachedBlocks($this), 1);
 
         foreach ($session->getPlayers() as $player) {
-            $player->teleport($session->getData()->getWaitingRoom());
+            $player->setGamemode(0);
+            $player->setHealth(20);
+            $player->setFood(20);
+            $player->teleport($this->getPos($player));
         }
     }
 }

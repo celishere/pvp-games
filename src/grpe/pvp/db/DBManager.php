@@ -15,7 +15,15 @@ namespace grpe\pvp\db;
  */
 class DBManager {
 
-    public function init(): void {
+    private \SQLite3 $database;
 
+    /**
+     * @param string $path
+     */
+    public function init(string $path): void {
+        $db = new \SQLite3($path . 'database.db');
+        $db->exec("CREATE TABLE IF NOT EXISTS `pvp` (`id` INT NOT NULL AUTO_INCREMENT, `username` VARCHAR(16) NOT NULL, `kills` INT NOT NULL)");
+
+        $this->database = $db;
     }
 }

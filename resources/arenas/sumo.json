@@ -1,9 +1,10 @@
 {
-  "name": "test",
-  "mode": "classic",
+  "name": "sumo",
+  "mode": "sumo",
   "world": "test",
   "platform": "all",
-  "isTeam": true,
+  "isTeam": false,
+  "fallY": 4,
   "countdown": 5,
   "gameTime": 60,
   "minPlayers": 4,

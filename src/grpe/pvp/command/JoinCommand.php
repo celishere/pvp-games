@@ -42,7 +42,9 @@ class JoinCommand extends Command {
      */
     public function execute(CommandSender $sender, string $commandLabel, array $args): bool {
         if ($sender instanceof Player) {
-            $gameSession = Main::getGameManager()->findGameByMode('ffa');
+            $mode = $args[0] ?? 'sumo';
+
+            $gameSession = Main::getGameManager()->findGame($mode, 0); //todo: вызывай функцию из ядра
 
             if ($gameSession instanceof GameSession) {
                 $gameSession->addPlayer($sender);
@@ -51,6 +53,7 @@ class JoinCommand extends Command {
 
             $sender->sendMessage(TextFormat::RED. 'Не удалось найти игру.');
         }
+
         return false;
     }
 }

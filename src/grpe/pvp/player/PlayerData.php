@@ -19,6 +19,8 @@ class PlayerData {
 
     private ?GameSession $gameSession = null;
 
+    private int $kills = 0;
+
     /**
      * @param GameSession $gameSession
      */
@@ -31,5 +33,12 @@ class PlayerData {
      */
     public function getSession(): GameSession {
         return $this->gameSession;
+    }
+
+    /**
+     * @return int
+     */
+    public function getKills(): int {
+        return $this->kills;
     }
 }

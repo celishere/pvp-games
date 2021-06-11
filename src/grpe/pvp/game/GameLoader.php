@@ -58,6 +58,12 @@ final class GameLoader {
                         continue;
                     }
 
+                    $platform = $arenaData["platform"] ?? null;
+                    if ($platform === null) {
+                        $logger->warning("Платформа арены не указана. Имя арены - $name");
+                        continue;
+                    }
+
                     $countdown = $arenaData["countdown"] ?? null;
                     if ($countdown === null) {
                         $logger->warning("Countdown арены не указано. Имя арены - $name.");
@@ -119,7 +125,9 @@ final class GameLoader {
                 if ($mode === "ffa") {
                     $gameData = new FFAGameData($name, $mode, $world, $pos1, $pos2);
                 } else {
-                    $gameData = new GameData($name, $mode, $world, $team, $countdown, $maxPlayers, $minPlayers, $waitingRoom, $pos1, $pos2);
+                    $fallY = $arenaData["fallY"] ?? 0;
+
+                    $gameData = new GameData($name, $mode, $world, $team, $platform, $countdown, $maxPlayers, $minPlayers, $fallY, $waitingRoom, $pos1, $pos2);
                 }
 
                 if (!Server::getInstance()->loadLevel($world)) {

@@ -6,23 +6,18 @@ namespace grpe\pvp\game;
 
 use grpe\pvp\Main;
 
-use grpe\pvp\game\stages\CountdownStage;
-use grpe\pvp\game\stages\WaitingStage;
 use grpe\pvp\game\stages\RunningStage;
-use grpe\pvp\game\stages\EndingStage;
 
 use grpe\pvp\game\mode\Mode;
 use grpe\pvp\game\mode\FFAMode;
 use grpe\pvp\game\mode\BasicDuels;
-
-use grpe\pvp\game\mode\modes\StickDuels;
-use grpe\pvp\game\mode\modes\ClassicDuels;
 use grpe\pvp\game\mode\modes\SumoDuels;
-use grpe\pvp\game\mode\modes\FFA;
 
 use grpe\pvp\player\PlayerData;
 
 use grpe\pvp\event\PvPJoinEvent;
+
+use grpe\pvp\utils\Utils;
 
 use pocketmine\Player;
 use pocketmine\Server;
@@ -63,7 +58,7 @@ final class GameSession {
      */
     public function __construct($gameData) {
         $this->data = $gameData;
-        $this->mode = $this->getModeById($gameData->getMode());
+        $this->mode = Utils::getModeById($gameData->getMode(), $this);
 
         if (!$gameData instanceof FFAGameData) {
             $this->setStage(self::WAITING_STAGE);
@@ -90,7 +85,7 @@ final class GameSession {
     public function setStage(int $stage): void {
         $this->getMode()->onStageChange($stage);
 
-        $this->stage = $this->getStageById($stage);
+        $this->stage = Utils::getStageById($stage, $this);
     }
 
     /**
@@ -101,25 +96,6 @@ final class GameSession {
     }
 
     /**
-     * @param int $id
-     *
-     * @return Stage
-     */
-    public function getStageById(int $id): Stage {
-        switch ($id) {
-            default:
-            case 0:
-                return new WaitingStage($this);
-            case 1:
-                return new CountdownStage($this);
-            case 2:
-                return new RunningStage($this);
-            case 3:
-                return new EndingStage($this);
-        }
-    }
-
-    /**
      * @return Mode|FFAMode
      */
     public function getMode() {
@@ -127,22 +103,10 @@ final class GameSession {
     }
 
     /**
-     * @param string $id
-     *
-     * @return Mode|FFAMode
+     * @return string
      */
-    public function getModeById(string $id) {
-        switch ($id) {
-            default:
-            case 'stick':
-                return new StickDuels($this);
-            case 'classic':
-                return new ClassicDuels($this);
-            case 'sumo':
-                return new SumoDuels($this);
-            case 'ffa':
-                return new FFA($this);
-        }
+    public function getPlatform(): string {
+        return $this->getData()->getPlatform();
     }
 
     /**
@@ -187,6 +151,8 @@ final class GameSession {
         $player->setHealth(20);
 
         if (!$killed) {
+            Main::getPlayerDataManager()->unregisterPlayer($player);
+
             if ($player->isOnline()) {
                 $player->teleport(Server::getInstance()->getDefaultLevel()->getSpawnLocation());
             }
@@ -273,7 +239,7 @@ final class GameSession {
 
             if ($this->getMode() instanceof SumoDuels) {
                 foreach ($this->getPlayers() as $player) {
-                    if ($player->getY() < 0) { //задать значение в конфиге?
+                    if ($player->getY() < $this->getMode()->getSession()->getData()->getFallY()) {
                         $this->removePlayer($player, true);
                     }
                 }
