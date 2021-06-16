@@ -3,12 +3,12 @@
   "mode": "classic",
   "world": "test",
   "platform": "all",
-  "isTeam": true,
+  "isTeam": false,
   "countdown": 5,
   "gameTime": 60,
-  "minPlayers": 4,
-  "maxPlayers": 4,
-  "waitingRoom": "1.5:10:1.5:test:360:2",
-  "pos1": "1.5:10:1.5:test:360:2",
-  "pos2": "1.5:10:1.5:test:360:2"
+  "minPlayers": 2,
+  "maxPlayers": 2,
+  "waitingRoom": "-17.5:70:0.5:pvp:360:2",
+  "pos1": "0.5:63:-10.5:pvp:360:2",
+  "pos2": "0.5:63:11.5:pvp:360:2"
 }

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace grpe\pvp\game;
 
 use grpe\pvp\game\mode\Mode;
+
 use pocketmine\Player;
 
 /**

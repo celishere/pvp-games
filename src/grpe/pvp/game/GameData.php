@@ -27,7 +27,6 @@ final class GameData {
     private int $countdown;
     private int $maxPlayers;
     private int $minPlayers;
-    private ?int $fallY;
 
     private Vector3 $waitingRoom;
     private Vector3 $pos1;
@@ -43,12 +42,11 @@ final class GameData {
      * @param int $countdown
      * @param int $maxPlayers
      * @param int $minPlayers
-     * @param int|null $fallY
      * @param Vector3 $waitingRoom
      * @param Vector3 $pos1
      * @param Vector3 $pos2
      */
-    public function __construct(string $name, string $mode, string $world, bool $team, string $platform, int $countdown, int $maxPlayers, int $minPlayers, ?int $fallY, Vector3 $waitingRoom, Vector3 $pos1, Vector3 $pos2) {
+    public function __construct(string $name, string $mode, string $world, bool $team, string $platform, int $countdown, int $maxPlayers, int $minPlayers, Vector3 $waitingRoom, Vector3 $pos1, Vector3 $pos2) {
         $this->name = $name;
         $this->mode = $mode;
         $this->world = $world;
@@ -61,8 +59,6 @@ final class GameData {
 
         $this->minPlayers = $minPlayers;
         $this->maxPlayers = $maxPlayers;
-
-        $this->fallY = $fallY;
 
         $this->waitingRoom = $waitingRoom;
 
@@ -124,13 +120,6 @@ final class GameData {
      */
     public function getMinPlayers(): int {
         return $this->minPlayers;
-    }
-
-    /**
-     * @return int|null
-     */
-    public function getFallY(): ?int {
-        return $this->fallY;
     }
 
     /**

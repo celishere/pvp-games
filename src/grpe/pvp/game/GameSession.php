@@ -6,12 +6,11 @@ namespace grpe\pvp\game;
 
 use grpe\pvp\Main;
 
-use grpe\pvp\game\stages\RunningStage;
-
 use grpe\pvp\game\mode\Mode;
 use grpe\pvp\game\mode\FFAMode;
 use grpe\pvp\game\mode\BasicDuels;
-use grpe\pvp\game\mode\modes\SumoDuels;
+
+use grpe\pvp\game\stages\RunningStage;
 
 use grpe\pvp\player\PlayerData;
 
@@ -19,6 +18,7 @@ use grpe\pvp\event\PvPJoinEvent;
 
 use grpe\pvp\utils\Utils;
 
+use pocketmine\item\Item;
 use pocketmine\Player;
 use pocketmine\Server;
 
@@ -62,6 +62,8 @@ final class GameSession {
 
         if (!$gameData instanceof FFAGameData) {
             $this->setStage(self::WAITING_STAGE);
+        } else {
+            $this->setStage(self::RUNNING_STAGE);
         }
     }
 
@@ -126,6 +128,10 @@ final class GameSession {
 
         $data->setSession($this);
 
+        Utils::reset($player);
+
+        $player->getInventory()->setItem(8, Utils::createNamedTagItem(Item::get(Item::BED, 14), 'Выход', 'quit'));
+
         if ($this->getMode() instanceof FFAMode) {
             $this->getMode()->respawnPlayer($player);
         } else {
@@ -138,6 +144,10 @@ final class GameSession {
 
         $player->sendMessage(TextFormat::GREEN. 'Присоединился.');
 
+        foreach ($this->getPlayers() as $arenaPlayer) {
+            $arenaPlayer->sendMessage(TextFormat::colorize("&b". $player->getName() ." &fприсоединился."));
+        }
+
         Main::getInstance()->getServer()->getPluginManager()->callEvent(new PvPJoinEvent($player, $this->mode));
     }
 
@@ -147,11 +157,13 @@ final class GameSession {
      * @param string|null $deathMessage
      */
     public function removePlayer(Player $player, bool $killed = false, string $deathMessage = null): void {
-        var_dump($player->getName());
         $player->setHealth(20);
+        $player->setMaxHealth(20);
 
         if (!$killed) {
             Main::getPlayerDataManager()->unregisterPlayer($player);
+
+            Utils::reset($player);
 
             if ($player->isOnline()) {
                 $player->teleport(Server::getInstance()->getDefaultLevel()->getSpawnLocation());
@@ -186,7 +198,10 @@ final class GameSession {
                     $teamId = $mode->getPlayerTeam($player);
 
                     if ($teamId !== null) {
-                        unset($mode->getTeams()[$teamId][$player->getLowerCaseName()]);
+                        $teamsData = $mode->getTeams();
+                        unset($teamsData[$teamId][$player->getLowerCaseName()]);
+
+                        $mode->setTeams($teamsData);
 
                         if (count($mode->getTeams()[$teamId]) < 1) {
                             $this->setStage(self::ENDING_STAGE);
@@ -236,14 +251,6 @@ final class GameSession {
             $this->getMode()->tick();
         } else {
             $this->getStage()->onTick();
-
-            if ($this->getMode() instanceof SumoDuels) {
-                foreach ($this->getPlayers() as $player) {
-                    if ($player->getY() < $this->getMode()->getSession()->getData()->getFallY()) {
-                        $this->removePlayer($player, true);
-                    }
-                }
-            }
         }
     }
 }

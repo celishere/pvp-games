@@ -1,15 +1,14 @@
 {
   "name": "sumo",
   "mode": "sumo",
-  "world": "test",
+  "world": "sumo",
   "platform": "all",
   "isTeam": false,
-  "fallY": 4,
   "countdown": 5,
   "gameTime": 60,
-  "minPlayers": 4,
+  "minPlayers": 2,
   "maxPlayers": 4,
-  "waitingRoom": "1.5:10:1.5:test:360:2",
-  "pos1": "1.5:10:1.5:test:360:2",
-  "pos2": "1.5:10:1.5:test:360:2"
+  "waitingRoom": "-101.5:76:-44.5:sumo:360:2",
+  "pos1": "-108.5:76:-44.5:sumo:360:2",
+  "pos2": "-94.5:76:-44.5:sumo:360:2"
 }

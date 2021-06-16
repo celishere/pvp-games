@@ -30,6 +30,13 @@ abstract class BasicDuels extends Mode {
     }
 
     /**
+     * @param array $teamsData
+     */
+    public function setTeams(array $teamsData): void {
+        $this->teams = $teamsData;
+    }
+
+    /**
      * @return array|array[]
      */
     public function getTeams(): array {

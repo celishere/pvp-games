@@ -19,7 +19,12 @@ use grpe\pvp\game\stages\EndingStage;
 use grpe\pvp\game\stages\RunningStage;
 use grpe\pvp\game\stages\WaitingStage;
 
+use pocketmine\item\Item;
 use pocketmine\math\Vector3;
+
+use pocketmine\Player;
+
+use pocketmine\nbt\tag\StringTag;
 
 use InvalidArgumentException;
 
@@ -131,5 +136,33 @@ class Utils {
             case 'ffa':
                 return new ClassicFFA($session);
         }
+    }
+
+    /**
+     * @param Item $item
+     * @param string $itemName
+     * @param string $tagName
+     * @return Item
+     */
+    public static function createNamedTagItem(Item $item, string $itemName, string $tagName): Item {
+        $item->setCustomName($itemName);
+        $item->setNamedTagEntry(new StringTag($tagName));
+
+        return $item;
+    }
+
+    /**
+     * @param Player $player
+     */
+    public static function reset(Player $player): void {
+        $player->getInventory()->clearAll();
+        $player->getArmorInventory()->clearAll(); //в 1.1 такого нету
+
+        $player->setGamemode(2);
+        $player->setHealth(20);
+        $player->setMaxHealth(20);
+        $player->setFood(20);
+        $player->setXpLevel(0);
+        $player->setXpProgress(0);
     }
 }

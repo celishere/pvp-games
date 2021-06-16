@@ -5,11 +5,10 @@ namespace grpe\pvp\game;
 use grpe\pvp\Main;
 use grpe\pvp\utils\Utils;
 
-use InvalidArgumentException;
-use JsonException;
-use pocketmine\level\generator\Flat;
 use pocketmine\Server;
 use pocketmine\utils\Config;
+
+use InvalidArgumentException;
 
 /**
  * Class GameLoader
@@ -125,9 +124,7 @@ final class GameLoader {
                 if ($mode === "ffa") {
                     $gameData = new FFAGameData($name, $mode, $world, $pos1, $pos2);
                 } else {
-                    $fallY = $arenaData["fallY"] ?? 0;
-
-                    $gameData = new GameData($name, $mode, $world, $team, $platform, $countdown, $maxPlayers, $minPlayers, $fallY, $waitingRoom, $pos1, $pos2);
+                    $gameData = new GameData($name, $mode, $world, $team, $platform, $countdown, $maxPlayers, $minPlayers, $waitingRoom, $pos1, $pos2);
                 }
 
                 if (!Server::getInstance()->loadLevel($world)) {

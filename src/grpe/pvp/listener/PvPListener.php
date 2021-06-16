@@ -8,24 +8,42 @@ use grpe\pvp\Main;
 
 use grpe\pvp\game\GameSession;
 
+use grpe\pvp\game\stages\RunningStage;
+
 use grpe\pvp\game\mode\FFAMode;
 use grpe\pvp\game\mode\modes\StickDuels;
 use grpe\pvp\game\mode\modes\ClassicDuels;
+use grpe\pvp\game\mode\modes\SumoDuels;
 
-use pocketmine\event\block\BlockUpdateEvent;
+use grpe\pvp\player\PlayerData;
+
+use pocketmine\block\Bed;
+use pocketmine\block\Block;
+
+use pocketmine\tile\Bed as TileBed;
+
 use pocketmine\event\Listener;
 
+use pocketmine\event\inventory\InventoryTransactionEvent;
+
+use pocketmine\event\player\PlayerDropItemEvent;
+use pocketmine\event\player\PlayerExhaustEvent;
+use pocketmine\event\player\PlayerInteractEvent;
 use pocketmine\event\player\PlayerJoinEvent;
 use pocketmine\event\player\PlayerQuitEvent;
 
 use pocketmine\event\entity\EntityDamageByEntityEvent;
 use pocketmine\event\entity\EntityDamageEvent;
 
+use pocketmine\event\block\BlockUpdateEvent;
 use pocketmine\event\block\BlockPlaceEvent;
 use pocketmine\event\block\BlockBreakEvent;
 
-use pocketmine\block\Bed;
-use pocketmine\tile\Bed as TileBed;
+use pocketmine\inventory\PlayerInventory;
+
+use pocketmine\level\particle\DestroyBlockParticle;
+
+use pocketmine\nbt\tag\NamedTag;
 
 use pocketmine\Player;
 use pocketmine\Server;
@@ -47,7 +65,7 @@ class PvPListener implements Listener {
      * @param PlayerJoinEvent $event
      */
     public function onJoin(PlayerJoinEvent $event): void {
-        Server::getInstance()->dispatchCommand($event->getPlayer(), 'join');
+    //    Server::getInstance()->dispatchCommand($event->getPlayer(), 'join');
     }
 
     /**
@@ -55,6 +73,18 @@ class PvPListener implements Listener {
      */
     public function onQuit(PlayerQuitEvent $event): void {
         Server::getInstance()->dispatchCommand($event->getPlayer(), 'quit');
+    }
+
+    /**
+     * @param PlayerInteractEvent $event
+     */
+    public function onInteract(PlayerInteractEvent $event): void {
+        $player = $event->getPlayer();
+        $item = $event->getItem();
+
+        if ($item->getNamedTagEntry('quit') instanceof NamedTag) {
+            Server::getInstance()->dispatchCommand($player, 'quit');
+        }
     }
 
     /**
@@ -164,25 +194,116 @@ class PvPListener implements Listener {
                                 if (($entity->getHealth() - $event->getFinalDamage()) <= 0) {
                                     $event->setCancelled();
 
+                                    $entity->getLevel()->addParticle(new DestroyBlockParticle($entity, Block::get(Block::REDSTONE_BLOCK)));
+
                                     $deathMessage = '&b'. $entity->getName() . ' &fбыл убит &e'. $damager->getName();
                                     $entitySession->removePlayer($entity, true, $deathMessage);
 
                                     $damager->sendMessage(TextFormat::RED. 'Kill!');
+
+                                    $manager = Main::getPlayerDataManager();
+
+                                    if (($entitySession = $manager->getPlayerData($entity)) instanceof PlayerData) {
+                                        $entitySession->addDeath();
+                                    }
+
+                                    if (($damagerSession = $manager->getPlayerData($damager)) instanceof PlayerData) {
+                                        $damagerSession->addKill();
+                                    }
                                 }
                             }
                         }
                     }
                 } else {
-                    if (($entity->getHealth() - $event->getFinalDamage()) < 0) {
-                        $event->setCancelled();
+                    $manager = Main::getPlayerDataManager();
 
-                        if ($mode instanceof StickDuels) {
-                            $entity->teleport($mode->getPos($entity));
-                        } else {
+                    if ($event->getCause() === EntityDamageEvent::CAUSE_VOID) {
+                        if (($entSession = $manager->getPlayerData($entity)) instanceof PlayerData) {
+                            $entSession->addDeath();
+                        }
+
+                        if ($mode instanceof SumoDuels) {
                             $entitySession->removePlayer($entity, true);
+                        }
+                    } else {
+                        if (($entity->getHealth() - $event->getFinalDamage()) < 0) {
+                            $event->setCancelled();
+
+                            if (($entSession = $manager->getPlayerData($entity)) instanceof PlayerData) {
+                                $entSession->addDeath();
+                            }
+
+                            if ($mode instanceof StickDuels) {
+                                $entity->teleport($mode->getPos($entity));
+                            } else {
+                                $entitySession->removePlayer($entity, true);
+                            }
                         }
                     }
                 }
+            }
+        }
+    }
+
+    /**
+     * @param PlayerDropItemEvent $event
+     */
+    public function onDrop(PlayerDropItemEvent $event): void {
+        $event->setCancelled();
+    }
+
+    /**
+     * @param InventoryTransactionEvent $event
+     */
+    public function onTransaction(InventoryTransactionEvent $event): void {
+        $player = null;
+
+        foreach ($event->getTransaction()->getInventories() as $inventory) {
+            if ($inventory instanceof PlayerInventory) {
+                $player = $inventory->getHolder();
+            }
+        }
+
+        if ($player instanceof Player) {
+            $game = Main::getSessionManager()->getSession($player);
+
+            if ($game instanceof GameSession) {
+                if (!$game->getStage() instanceof RunningStage) {
+                    $event->setCancelled();
+                } else {
+                    $mode = $game->getMode();
+
+                    if (!$mode instanceof ClassicDuels) {
+                        $event->setCancelled();
+                    }
+                }
+            } else {
+                $event->setCancelled();
+            }
+        }
+    }
+
+    /**
+     * @param PlayerExhaustEvent $event
+     */
+    public function onExhaust(PlayerExhaustEvent $event): void {
+        $player = $event->getPlayer();
+
+        if ($player instanceof Player) {
+            $game = Main::getSessionManager()->getSession($player);
+
+            if ($game instanceof GameSession) {
+                if (!$game->getStage() instanceof RunningStage) {
+                    $event->setCancelled();
+                } else {
+                    $mode = $game->getMode();
+
+                    if (!$mode instanceof ClassicDuels) {
+                        $event->setCancelled();
+                    }
+                }
+            } else {
+                $event->setCancelled();
             }
         }
     }

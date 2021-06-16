@@ -6,6 +6,7 @@ namespace grpe\pvp\game\mode;
 
 use grpe\pvp\game\GameSession;
 
+use pocketmine\level\Position;
 use pocketmine\math\Vector3;
 
 use pocketmine\Player;
@@ -43,7 +44,7 @@ abstract class BasicFFA extends FFAMode {
         $x = mt_rand($pos1->getX(), $pos2->getX());
         $z = mt_rand($pos1->getZ(), $pos2->getZ());
 
-        return new Vector3($x, $pos1->getY(), $z); //Y один и тот же?
+        return new Position($x, $pos1->getY(), $z, $this->getSession()->getLevel()); //Y один и тот же?
     }
 
     /**

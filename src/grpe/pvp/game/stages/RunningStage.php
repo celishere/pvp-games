@@ -27,8 +27,7 @@ class RunningStage extends Stage {
      * @param GameSession $session
      */
     public function __construct(GameSession $session) {
-        //$this->setTime($session->getData()->getGameTime());
-        $this->setTime(60);
+        $this->setTime($session->getData()->getGameTime());
 
         foreach ($session->getPlayers() as $player) {
             $enemy = implode("&7, &c", $session->getMode()->getOpponent($player));

@@ -41,6 +41,11 @@ abstract class FFAMode {
     abstract public function getItems(): array;
 
     /**
+     * @param int $stageId
+     */
+    public function onStageChange(int $stageId): void {}
+
+    /**
      * @param Player $player
      */
     abstract public function respawnPlayer(Player $player): void;

@@ -93,9 +93,11 @@ class StickDuels extends BasicDuels {
     }
 
     public function resetMap(): void {
-        $session = $this->getSession();
-
         Main::getInstance()->getScheduler()->scheduleRepeatingTask(new RemoveCachedBlocks($this), 1);
+    }
+
+    public function onReset(): void {
+        $session = $this->getSession();
 
         foreach ($session->getPlayers() as $player) {
             $player->setGamemode(0);

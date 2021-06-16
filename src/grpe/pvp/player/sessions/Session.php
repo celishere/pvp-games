@@ -31,12 +31,4 @@ class Session {
     public function getUsername(): string {
         return $this->username;
     }
-
-    public function onRequest(array $data): void {
-
-    }
-
-    public function onSave(): void {
-
-    }
 }

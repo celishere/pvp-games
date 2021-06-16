@@ -68,4 +68,11 @@ final class FFAGameData {
     public function getPos2(): Vector3 {
         return $this->pos2;
     }
+
+    /**
+     * @return string
+     */
+    public function getWorld(): string {
+        return $this->world;
+    }
 }

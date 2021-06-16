@@ -45,6 +45,11 @@ abstract class Mode {
     abstract public function onStageChange(int $stageId): void;
 
     /**
+     * @param array $teamsData
+     */
+    abstract public function setTeams(array $teamsData): void;
+
+    /**
      * @return array
      */
     abstract public function getTeams(): array;

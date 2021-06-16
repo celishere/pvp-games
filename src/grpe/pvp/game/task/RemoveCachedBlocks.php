@@ -4,8 +4,9 @@ declare(strict_types=1);
 
 namespace grpe\pvp\game\task;
 
-use grpe\pvp\game\mode\modes\StickDuels;
 use grpe\pvp\Main;
+
+use grpe\pvp\game\mode\modes\StickDuels;
 
 use grpe\pvp\utils\Utils;
 
@@ -107,7 +108,8 @@ class RemoveCachedBlocks extends Task {
             $time = round(microtime(true) - $this->startTime, 4);
 
             Main::getInstance()->getLogger()->info("(StickDuels) Заполнение блоков было выполнено за ". $time ."с., заполнено ". $this->totalCount ." блоков.");
-            return;
+
+            $this->mode->onReset();
         }
     }
 }
