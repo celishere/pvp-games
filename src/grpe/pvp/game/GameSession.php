@@ -15,6 +15,7 @@ use grpe\pvp\game\stages\RunningStage;
 use grpe\pvp\player\PlayerData;
 
 use grpe\pvp\event\PvPJoinEvent;
+use grpe\pvp\event\PvPQuitEvent;
 
 use grpe\pvp\utils\Utils;
 
@@ -172,6 +173,8 @@ final class GameSession {
             foreach ($this->getPlayers() as $players) {
                 $players->sendMessage(TextFormat::colorize('&b' . $player->getName() . ' &fвышел.'));
             }
+
+            Main::getInstance()->getServer()->getPluginManager()->callEvent(new PvPQuitEvent($player, $this->mode));
         } else {
             foreach ($this->getPlayers() as $players) {
                 if ($deathMessage !== null) {
