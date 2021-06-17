@@ -4,8 +4,11 @@ declare(strict_types=1);
 
 namespace grpe\pvp;
 
+use grpe\pvp\db\DBManager;
+
 use grpe\pvp\game\GameLoader;
 use grpe\pvp\game\GameManager;
+
 use grpe\pvp\game\task\GameSessionsTask;
 
 use grpe\pvp\command\JoinCommand;
@@ -36,12 +39,14 @@ use pocketmine\plugin\PluginBase;
 class Main extends PluginBase {
 
     private static Main $instance;
+    private static DBManager $dbManager;
     private static GameManager $gameManager;
     private static SessionManager $sessionManager;
     private static PlayerDataManager $playerDataManager;
 
     public function onLoad(): void {
         self::$instance           = $this;
+        self::$dbManager          = new DBManager();
         self::$gameManager        = new GameManager();
         self::$sessionManager     = new SessionManager();
         self::$playerDataManager  = new PlayerDataManager();
@@ -49,6 +54,8 @@ class Main extends PluginBase {
         new LanguageFactory();
 
         Utils::createDirectory($this->getDataFolder(), 'arenas/');
+
+        self::getDataBaseManager()->init($this->getDataFolder());
 
         $commandMap = $this->getServer()->getCommandMap();
         $commandMap->register('join', new JoinCommand('join', 'присоединиться к игре.'));
@@ -70,6 +77,13 @@ class Main extends PluginBase {
      */
     public static function getInstance(): Main {
         return self::$instance;
+    }
+
+    /**
+     * @return DBManager
+     */
+    public static function getDataBaseManager(): DBManager {
+        return self::$dbManager;
     }
 
     /**

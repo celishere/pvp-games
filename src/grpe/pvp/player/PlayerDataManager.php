@@ -32,7 +32,11 @@ class PlayerDataManager {
      * @param Player $player
      */
     public function unregisterPlayer(Player $player): void {
-        //save to db
+        $data = $this->getPlayerData($player);
+
+        if ($data instanceof PlayerData) {
+            $data->save();
+        }
 
         unset($this->playersData[$player->getLowerCaseName()]);
     }

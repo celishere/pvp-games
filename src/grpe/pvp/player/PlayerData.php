@@ -4,7 +4,10 @@ declare(strict_types=1);
 
 namespace grpe\pvp\player;
 
+use grpe\pvp\Main;
 use grpe\pvp\game\GameSession;
+
+use pocketmine\Player;
 
 /**
  * Class PlayerData
@@ -17,6 +20,8 @@ use grpe\pvp\game\GameSession;
  */
 class PlayerData {
 
+    private Player $owner;
+
     private ?GameSession $gameSession = null;
 
     private int $kills = 0;
@@ -24,6 +29,14 @@ class PlayerData {
 
     private int $kill_streak = 0;
     private int $max_kill_streak = 0;
+
+    /**
+     * PlayerData constructor.
+     * @param Player $owner
+     */
+    public function __construct(Player $owner) {
+        $this->owner = $owner;
+    }
 
     /**
      * @param GameSession $gameSession
@@ -57,6 +70,7 @@ class PlayerData {
 
     public function addDeath(): void {
         $this->deaths++;
+
         $this->kill_streak = 0;
     }
 
@@ -92,5 +106,13 @@ class PlayerData {
         }
 
         return number_format($kd, 2);
+    }
+
+    public function save(): void {
+        $session = Main::getSessionManager()->getSession($this->owner);
+
+        $session->addKills($this->kills);
+        $session->addDeath($this->deaths);
+        $session->addGames(1);
     }
 }
