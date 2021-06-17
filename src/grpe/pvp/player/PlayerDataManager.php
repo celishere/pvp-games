@@ -25,7 +25,7 @@ class PlayerDataManager {
      * @return PlayerData
      */
     public function registerPlayer(Player $player): PlayerData {
-        return $this->playersData[$player->getLowerCaseName()] = new PlayerData();
+        return $this->playersData[$player->getLowerCaseName()] = new PlayerData($player);
     }
 
     /**

@@ -9,6 +9,8 @@ use grpe\pvp\game\GameSession;
 use grpe\pvp\game\mode\Mode;
 use grpe\pvp\game\mode\BasicFFA;
 use grpe\pvp\game\mode\modes\ffa\ClassicFFA;
+use grpe\pvp\game\mode\modes\ffa\NodebuffFFA;
+use grpe\pvp\game\mode\modes\ffa\ResistanceFFA;
 use grpe\pvp\game\mode\modes\duels\ClassicDuels;
 use grpe\pvp\game\mode\modes\duels\StickDuels;
 use grpe\pvp\game\mode\modes\duels\SumoDuels;
@@ -135,6 +137,10 @@ class Utils {
                 return new SumoDuels($session);
             case 'ffa':
                 return new ClassicFFA($session);
+            case 'nodebuff':
+                return new NodebuffFFA($session);
+            case 'resistance':
+                return new ResistanceFFA($session);
         }
     }
 

@@ -111,6 +111,13 @@ final class GameData {
     /**
      * @return int
      */
+    public function getGameTime(): int {
+        return 600; //todo
+    }
+
+    /**
+     * @return int
+     */
     public function getMaxPlayers(): int {
         return $this->maxPlayers;
     }

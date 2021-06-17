@@ -63,8 +63,6 @@ final class GameSession {
 
         if (!$gameData instanceof FFAGameData) {
             $this->setStage(self::WAITING_STAGE);
-        } else {
-            $this->setStage(self::RUNNING_STAGE);
         }
     }
 
@@ -161,6 +159,8 @@ final class GameSession {
         $player->setHealth(20);
         $player->setMaxHealth(20);
 
+        var_dump($killed);
+
         if (!$killed) {
             Main::getPlayerDataManager()->unregisterPlayer($player);
 
@@ -209,8 +209,18 @@ final class GameSession {
                         if (count($mode->getTeams()[$teamId]) < 1) {
                             $this->setStage(self::ENDING_STAGE);
 
+                            $winners = [];
+
+                            foreach ($mode->getTeams() as $team) {
+                                foreach ($team as $name => $player) {
+                                    $winners[] = $name;
+                                }
+                            }
+
                             foreach ($this->getPlayers() as $players) {
                                 $players->sendMessage('Игра окончена.');
+
+                                $players->sendMessage("Победители: ". implode("&7, &c", $winners));
                             }
                         }
                     }

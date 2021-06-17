@@ -18,6 +18,7 @@ use grpe\pvp\game\mode\modes\duels\SumoDuels;
 
 use grpe\pvp\player\PlayerData;
 
+use grpe\pvp\utils\Utils;
 use pocketmine\block\Bed;
 use pocketmine\block\Block;
 
@@ -66,7 +67,13 @@ class PvPListener implements Listener {
      * @param PlayerJoinEvent $event
      */
     public function onJoin(PlayerJoinEvent $event): void {
-    //    Server::getInstance()->dispatchCommand($event->getPlayer(), 'join');
+        //    Server::getInstance()->dispatchCommand($event->getPlayer(), 'join');
+        $player = $event->getPlayer();
+
+        Utils::reset($player);
+
+        $player->teleport(Server::getInstance()->getDefaultLevel()->getSpawnLocation());
+        $player->sendMessage(TextFormat::colorize("&aДобро пожаловать!"));
     }
 
     /**
@@ -184,14 +191,16 @@ class PvPListener implements Listener {
                         $damagerSession = Main::getGameManager()->getPlayerSession($damager);
 
                         if ($damagerSession instanceof GameSession) {
+                            if ($mode instanceof SumoDuels or $mode instanceof ResistanceFFA) {
+                                $entity->setHealth($entity->getMaxHealth());
+                                return;
+                            }
+
                             if (!$mode instanceof FFAMode) {
                                 if ($mode->getPlayerTeam($damager) === $mode->getPlayerTeam($entity)) {
                                     $event->setCancelled();
                                     return;
                                 }
-                            } else if ($mode instanceof ResistanceFFA) {
-                                $entity->setHealth($entity->getMaxHealth());
-                                return;
                             }
 
                             if ($mode instanceof ClassicDuels or $mode instanceof FFAMode) {
@@ -221,27 +230,27 @@ class PvPListener implements Listener {
                 } else {
                     $manager = Main::getPlayerDataManager();
 
-                    if ($event->getCause() === EntityDamageEvent::CAUSE_VOID) {
+                    if ($mode instanceof SumoDuels) {
+                        if ($event->getCause() === EntityDamageEvent::CAUSE_VOID) {
+                            $entitySession->removePlayer($entity, true);
+                        }
+
+                        $event->setCancelled();
+                        return;
+                    }
+
+
+                    if (($entity->getHealth() - $event->getFinalDamage()) < 0) {
+                        $event->setCancelled();
+
                         if (($entSession = $manager->getPlayerData($entity)) instanceof PlayerData) {
                             $entSession->addDeath();
                         }
 
-                        if ($mode instanceof SumoDuels) {
+                        if ($mode instanceof StickDuels) {
+                            $entity->teleport($mode->getPos($entity));
+                        } else {
                             $entitySession->removePlayer($entity, true);
-                        }
-                    } else {
-                        if (($entity->getHealth() - $event->getFinalDamage()) < 0) {
-                            $event->setCancelled();
-
-                            if (($entSession = $manager->getPlayerData($entity)) instanceof PlayerData) {
-                                $entSession->addDeath();
-                            }
-
-                            if ($mode instanceof StickDuels) {
-                                $entity->teleport($mode->getPos($entity));
-                            } else {
-                                $entitySession->removePlayer($entity, true);
-                            }
                         }
                     }
                 }

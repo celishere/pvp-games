@@ -39,7 +39,9 @@ class Session {
         $res = $prepare->execute()->fetchArray(SQLITE3_ASSOC);
 
         if (is_bool($res)) {
-            $db->exec("INSERT INTO `pvp` (username) VALUE (". $this->username .")");
+            $prep = $db->prepare("INSERT INTO `pvp` (username) VALUES (:username)");
+            $prep->bindValue("username", $this->username);
+            $prep->execute();
         }
 
 
