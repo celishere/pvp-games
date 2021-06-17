@@ -1,0 +1,14 @@
+{
+  "name": "map",
+  "mode": "stick",
+  "world": "test",
+  "platform": "all",
+  "isTeam": false,
+  "countdown": 10,
+  "gameTime": 600,
+  "minPlayers": 2,
+  "maxPlayers": 4,
+  "waitingRoom": "-101.5:76:-44.5:sumo:360:2",
+  "pos1": "-108.5:76:-44.5:sumo:360:2",
+  "pos2": "-94.5:76:-44.5:sumo:360:2"
+}

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace grpe\pvp\game\mode\modes;
+namespace grpe\pvp\game\mode\modes\duels;
 
 use grpe\pvp\Main;
 
@@ -14,7 +14,7 @@ use grpe\pvp\utils\Utils;
 
 /**
  * Class StickDuels
- * @package grpe\pvp\game\mode
+ * @package grpe\pvp\game\mode\modes\duels
  *
  * @author celis <celishere@gmail.com> <Telegram:@celishere>
  *

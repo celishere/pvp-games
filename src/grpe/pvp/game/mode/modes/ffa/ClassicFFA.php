@@ -2,18 +2,19 @@
 
 declare(strict_types=1);
 
-namespace grpe\pvp\game\mode\modes;
-
-use grpe\pvp\game\mode\BasicFFA;
+namespace grpe\pvp\game\mode\modes\ffa;
 
 use grpe\pvp\Main;
+
 use grpe\pvp\player\PlayerData;
+
+use grpe\pvp\game\mode\BasicFFA;
 
 use pocketmine\Player;
 
 /**
  * Class ClassicFFA
- * @package grpe\pvp\game\mode\modes
+ * @package grpe\pvp\game\mode\modes\ffa
  *
  * @version 1.0.0
  * @since   1.0.0
@@ -21,16 +22,12 @@ use pocketmine\Player;
 class ClassicFFA extends BasicFFA {
 
     /**
-     * @return array
-     */
-    public function getItems(): array {
-        return [];
-    }
-
-    /**
      * @param Player $player
      */
     public function respawnPlayer(Player $player): void {
+        $player->getInventory()->setContents($this->getItems());
+        $player->getArmorInventory()->setContents($this->getArmor()); //нет в 1.1
+
         $player->teleport($this->getPos());
     }
 

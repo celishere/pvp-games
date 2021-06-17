@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace grpe\pvp\listener;
 
+use grpe\pvp\game\mode\modes\ffa\ResistanceFFA;
 use grpe\pvp\Main;
 
 use grpe\pvp\game\GameSession;
@@ -11,9 +12,9 @@ use grpe\pvp\game\GameSession;
 use grpe\pvp\game\stages\RunningStage;
 
 use grpe\pvp\game\mode\FFAMode;
-use grpe\pvp\game\mode\modes\StickDuels;
-use grpe\pvp\game\mode\modes\ClassicDuels;
-use grpe\pvp\game\mode\modes\SumoDuels;
+use grpe\pvp\game\mode\modes\duels\StickDuels;
+use grpe\pvp\game\mode\modes\duels\ClassicDuels;
+use grpe\pvp\game\mode\modes\duels\SumoDuels;
 
 use grpe\pvp\player\PlayerData;
 
@@ -188,6 +189,9 @@ class PvPListener implements Listener {
                                     $event->setCancelled();
                                     return;
                                 }
+                            } else if ($mode instanceof ResistanceFFA) {
+                                $entity->setHealth($entity->getMaxHealth());
+                                return;
                             }
 
                             if ($mode instanceof ClassicDuels or $mode instanceof FFAMode) {

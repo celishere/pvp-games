@@ -36,6 +36,9 @@ abstract class BasicFFA extends FFAMode {
      * @return Vector3
      */
     public function getPos(): Vector3 {
+
+        //TODO: переделать под заданные точки
+
         $data = $this->getSession()->getData();
 
         $pos1 = $data->getPos1()->floor();
@@ -57,7 +60,16 @@ abstract class BasicFFA extends FFAMode {
     /**
      * @return array
      */
-    abstract public function getItems(): array;
+    public function getItems(): array {
+        return [];
+    }
+
+    /**
+     * @return array
+     */
+    public function getArmor(): array {
+        return [];
+    }
 
     /**
      * @param Player $player

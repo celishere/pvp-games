@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace grpe\pvp\game\mode\modes;
+namespace grpe\pvp\game\mode\modes\duels;
 
 use grpe\pvp\game\mode\BasicDuels;
 use grpe\pvp\game\GameSession;
@@ -11,7 +11,7 @@ use pocketmine\item\Item as I;
 
 /**
  * Class ClassicDuels
- * @package grpe\pvp\game\mode
+ * @package grpe\pvp\game\mode\modes\duels
  *
  * @author celis <celishere@gmail.com> <Telegram:@celishere>
  *

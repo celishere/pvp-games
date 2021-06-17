@@ -8,10 +8,10 @@ use grpe\pvp\game\GameSession;
 
 use grpe\pvp\game\mode\Mode;
 use grpe\pvp\game\mode\BasicFFA;
-use grpe\pvp\game\mode\modes\ClassicFFA;
-use grpe\pvp\game\mode\modes\ClassicDuels;
-use grpe\pvp\game\mode\modes\StickDuels;
-use grpe\pvp\game\mode\modes\SumoDuels;
+use grpe\pvp\game\mode\modes\ffa\ClassicFFA;
+use grpe\pvp\game\mode\modes\duels\ClassicDuels;
+use grpe\pvp\game\mode\modes\duels\StickDuels;
+use grpe\pvp\game\mode\modes\duels\SumoDuels;
 
 use grpe\pvp\game\Stage;
 use grpe\pvp\game\stages\CountdownStage;
