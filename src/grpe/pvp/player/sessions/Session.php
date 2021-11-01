@@ -4,8 +4,9 @@ declare(strict_types=1);
 
 namespace grpe\pvp\player\sessions;
 
-use grpe\pvp\db\Request;
 use grpe\pvp\Main;
+use grpe\pvp\db\Request;
+
 use pocketmine\Player;
 
 /**

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace grpe\pvp\listener;
 
-use grpe\pvp\game\mode\modes\ffa\ResistanceFFA;
 use grpe\pvp\Main;
 
 use grpe\pvp\game\GameSession;
@@ -15,13 +14,17 @@ use grpe\pvp\game\mode\FFAMode;
 use grpe\pvp\game\mode\modes\duels\StickDuels;
 use grpe\pvp\game\mode\modes\duels\ClassicDuels;
 use grpe\pvp\game\mode\modes\duels\SumoDuels;
+use grpe\pvp\game\mode\modes\ffa\ResistanceFFA;
 
 use grpe\pvp\player\PlayerData;
 
 use grpe\pvp\utils\Utils;
+
 use pocketmine\block\Bed;
 use pocketmine\block\Block;
 
+use pocketmine\event\Event;
+use pocketmine\event\player\PlayerMoveEvent;
 use pocketmine\tile\Bed as TileBed;
 
 use pocketmine\event\Listener;
@@ -29,13 +32,13 @@ use pocketmine\event\Listener;
 use pocketmine\event\inventory\InventoryTransactionEvent;
 
 use pocketmine\event\player\PlayerDropItemEvent;
-use pocketmine\event\player\PlayerExhaustEvent;
 use pocketmine\event\player\PlayerInteractEvent;
+use pocketmine\event\player\PlayerExhaustEvent;
 use pocketmine\event\player\PlayerJoinEvent;
 use pocketmine\event\player\PlayerQuitEvent;
 
-use pocketmine\event\entity\EntityDamageByEntityEvent;
 use pocketmine\event\entity\EntityDamageEvent;
+use pocketmine\event\entity\EntityDamageByEntityEvent;
 
 use pocketmine\event\block\BlockUpdateEvent;
 use pocketmine\event\block\BlockPlaceEvent;
@@ -47,10 +50,10 @@ use pocketmine\level\particle\DestroyBlockParticle;
 
 use pocketmine\nbt\tag\NamedTag;
 
+use pocketmine\utils\TextFormat;
+
 use pocketmine\Player;
 use pocketmine\Server;
-
-use pocketmine\utils\TextFormat;
 
 /**
  * Class PvPListener
@@ -142,15 +145,17 @@ class PvPListener implements Listener {
 
                     /** @var TileBed $bed */
                     $bedColorId = $bed->getColor();
-                    $teamId = $mode->getPlayerTeam($player);
+                    $team = $mode->getPlayerTeam($player);
 
-                    if ($teamId === $bedColorId) {
-                        foreach ($gameSession->getPlayers() as $sessionPlayers) {
-                            $sessionPlayers->sendMessage(TextFormat::colorize('&a' . $player->getName() . ' &fсломал кровать вражеской команды.'));
+                    if ($team != null) {
+                        if ($team->getId() === $bedColorId) {
+                            foreach ($gameSession->getPlayers() as $sessionPlayers) {
+                                $sessionPlayers->sendMessage(TextFormat::colorize('&a' . $player->getName() . ' &fсломал кровать вражеской команды.'));
+                            }
+
+                            $mode->addScore($team->getId());
+                            $mode->resetMap();
                         }
-
-                        $mode->addScore($teamId);
-                        $mode->resetMap();
                     }
                 } else {
                     if ($mode->isBlockCached($block->getX(), $block->getY(), $block->getZ())) {
@@ -197,7 +202,7 @@ class PvPListener implements Listener {
                             }
 
                             if (!$mode instanceof FFAMode) {
-                                if ($mode->getPlayerTeam($damager) === $mode->getPlayerTeam($entity)) {
+                                if ($mode->getPlayerTeam($damager)->getId() === $mode->getPlayerTeam($entity)->getId()) {
                                     $event->setCancelled();
                                     return;
                                 }
@@ -266,6 +271,13 @@ class PvPListener implements Listener {
     }
 
     /**
+     * @param PlayerMoveEvent $event
+     */
+    public function onMove(PlayerMoveEvent $event): void {
+        //$event->getPlayer()->sendPopup($event->getPlayer()->asLocation()->__toString());
+    }
+
+    /**
      * @param InventoryTransactionEvent $event
      */
     public function onTransaction(InventoryTransactionEvent $event): void {
@@ -278,21 +290,7 @@ class PvPListener implements Listener {
         }
 
         if ($player instanceof Player) {
-            $game = Main::getSessionManager()->getSession($player);
-
-            if ($game instanceof GameSession) {
-                if (!$game->getStage() instanceof RunningStage) {
-                    $event->setCancelled();
-                } else {
-                    $mode = $game->getMode();
-
-                    if (!$mode instanceof ClassicDuels) {
-                        $event->setCancelled();
-                    }
-                }
-            } else {
-                $event->setCancelled();
-            }
+            self::checkPlayer($player, $event);
         }
     }
 
@@ -303,21 +301,29 @@ class PvPListener implements Listener {
         $player = $event->getPlayer();
 
         if ($player instanceof Player) {
-            $game = Main::getSessionManager()->getSession($player);
+            self::checkPlayer($player, $event);
+        }
+    }
 
-            if ($game instanceof GameSession) {
-                if (!$game->getStage() instanceof RunningStage) {
-                    $event->setCancelled();
-                } else {
-                    $mode = $game->getMode();
+    /**
+     * @param Player $player
+     * @param Event  $event
+     */
+    private static function checkPlayer(Player $player, Event $event): void {
+        $game = Main::getSessionManager()->getSession($player);
 
-                    if (!$mode instanceof ClassicDuels) {
-                        $event->setCancelled();
-                    }
-                }
-            } else {
+        if ($game instanceof GameSession) {
+            if (!$game->getStage() instanceof RunningStage) {
                 $event->setCancelled();
+            } else {
+                $mode = $game->getMode();
+
+                if (!$mode instanceof ClassicDuels) {
+                    $event->setCancelled();
+                }
             }
+        } else {
+            $event->setCancelled();
         }
     }
 }

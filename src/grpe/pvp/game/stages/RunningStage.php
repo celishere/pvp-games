@@ -7,6 +7,8 @@ namespace grpe\pvp\game\stages;
 use grpe\pvp\game\Stage;
 use grpe\pvp\game\GameSession;
 
+use grpe\pvp\utils\Utils;
+
 use grpe\pvp\game\mode\modes\duels\StickDuels;
 
 use pocketmine\utils\TextFormat;
@@ -35,7 +37,7 @@ class RunningStage extends Stage {
             $player->teleport($session->getMode()->getPos($player));
 
             $player->sendMessage(TextFormat::GREEN. 'Игра началась.');
-            $player->sendMessage(TextFormat::colorize('Оппонент&7: &c'. $enemy));
+            $player->sendMessage(TextFormat::colorize(($session->getData()->isTeam() ? 'Оппоненты' : 'Оппонент') . '&7: &c'. $enemy));
         }
 
         parent::__construct($session);
@@ -53,11 +55,11 @@ class RunningStage extends Stage {
 
         if ($this->getTime() > 1) {
             $mode = $session->getMode();
-            $message = "Time: ". $this->getTime();
+            $message = TextFormat::colorize("&eИгра закончится через &b" . Utils::convertTime($this->getTime()));
 
             if ($mode instanceof StickDuels) {
                 foreach ($mode->getScores() as $teamId => $score) {
-                    $message .= "\n#". $teamId. " team: " .$score;
+                    $message .= TextFormat::colorize("&fКоманда &e". $teamId ." &7- &b". $score ." &fочков.");
                 }
             }
 

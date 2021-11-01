@@ -48,7 +48,9 @@ class LanguageFactory {
             self::$language = new Language(self::FALLBACK);
 
             Main::getInstance()->getLogger()->alert(self::getDefaultLanguage()->translateString("language.not.found",
-                [Main::getInstance()->getConfig()->get("language")]
+                [
+                    Main::getInstance()->getConfig()->get("language")
+                ]
             ));
         } else{
             self::$language = new Language(Main::getInstance()->getConfig()->get("language"));

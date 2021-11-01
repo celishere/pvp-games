@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace grpe\pvp\game\mode;
 
 use grpe\pvp\game\GameSession;
+use grpe\pvp\game\Team;
 
 use pocketmine\Player;
 use pocketmine\math\Vector3;
@@ -20,7 +21,14 @@ use pocketmine\math\Vector3;
  */
 abstract class Mode {
 
-    protected array $teams = [0 => [], 1 => []];
+    /** @var Team[] */
+    protected array $teams = [];
+
+    public function initTeams(): void {
+        for ($teamId = 1; $teamId <= 2; $teamId++) {
+            $this->teams[$teamId] = new Team($teamId);
+        }
+    }
 
     /**
      * @return GameSession
@@ -50,13 +58,13 @@ abstract class Mode {
     abstract public function setTeams(array $teamsData): void;
 
     /**
-     * @return array
+     * @return Team[]
      */
     abstract public function getTeams(): array;
 
     /**
      * @param Player $player
-     * @return int|null
+     * @return Team|null
      */
-    abstract public function getPlayerTeam(Player $player): ?int;
+    abstract public function getPlayerTeam(Player $player): ?Team;
 }

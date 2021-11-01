@@ -5,10 +5,9 @@ declare(strict_types=1);
 namespace grpe\pvp\game\task;
 
 use grpe\pvp\Main;
-
-use grpe\pvp\game\mode\modes\StickDuels;
-
 use grpe\pvp\utils\Utils;
+
+use grpe\pvp\game\mode\modes\duels\StickDuels;
 
 use pocketmine\block\Block;
 
@@ -107,7 +106,7 @@ class RemoveCachedBlocks extends Task {
 
             $time = round(microtime(true) - $this->startTime, 4);
 
-            Main::getInstance()->getLogger()->info("(StickDuels) Заполнение блоков было выполнено за ". $time ."с., заполнено ". $this->totalCount ." блоков.");
+            Main::getInstance()->getLogger()->debug("(StickDuels) Заполнение блоков было выполнено за ". $time ." с., заполнено ". $this->totalCount ." блоков.");
 
             $this->mode->onReset();
         }

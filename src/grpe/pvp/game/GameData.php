@@ -25,6 +25,8 @@ final class GameData {
     private bool $team;
 
     private int $countdown;
+    private int $gameTime;
+
     private int $maxPlayers;
     private int $minPlayers;
 
@@ -34,19 +36,21 @@ final class GameData {
 
     /**
      * GameData constructor.
-     * @param string $name
-     * @param string $mode
-     * @param string $world
-     * @param bool $team
-     * @param string $platform
-     * @param int $countdown
-     * @param int $maxPlayers
-     * @param int $minPlayers
+     *
+     * @param string  $name
+     * @param string  $mode
+     * @param string  $world
+     * @param bool    $team
+     * @param string  $platform
+     * @param int     $countdown
+     * @param int     $gameTime
+     * @param int     $maxPlayers
+     * @param int     $minPlayers
      * @param Vector3 $waitingRoom
      * @param Vector3 $pos1
      * @param Vector3 $pos2
      */
-    public function __construct(string $name, string $mode, string $world, bool $team, string $platform, int $countdown, int $maxPlayers, int $minPlayers, Vector3 $waitingRoom, Vector3 $pos1, Vector3 $pos2) {
+    public function __construct(string $name, string $mode, string $world, bool $team, string $platform, int $countdown, int $gameTime, int $maxPlayers, int $minPlayers, Vector3 $waitingRoom, Vector3 $pos1, Vector3 $pos2) {
         $this->name = $name;
         $this->mode = $mode;
         $this->world = $world;
@@ -56,6 +60,7 @@ final class GameData {
         $this->platform = $platform;
 
         $this->countdown = $countdown;
+        $this->gameTime = $gameTime;
 
         $this->minPlayers = $minPlayers;
         $this->maxPlayers = $maxPlayers;
@@ -112,7 +117,7 @@ final class GameData {
      * @return int
      */
     public function getGameTime(): int {
-        return 600; //todo
+        return $this->gameTime;
     }
 
     /**

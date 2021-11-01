@@ -7,6 +7,8 @@ namespace grpe\pvp\game\stages;
 use grpe\pvp\game\Stage;
 use grpe\pvp\game\GameSession;
 
+use pocketmine\utils\TextFormat;
+
 /**
  * Class CountdownStage
  * @package grpe\pvp\game\stages
@@ -43,7 +45,7 @@ class CountdownStage extends Stage {
                 $this->setTime($this->getTime() - 1);
 
                 foreach ($session->getPlayers() as $player) {
-                    $player->sendPopup('Time: ' . $this->getTime());
+                    $player->sendPopup(TextFormat::colorize('&aИгра начнется через &e' . $this->getTime() . ' &aс.'));
                 }
             } else {
                 $session->setStage(GameSession::WAITING_STAGE);

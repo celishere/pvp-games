@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace grpe\pvp\game\mode;
 
 use grpe\pvp\game\GameSession;
+use grpe\pvp\game\Team;
 
 use pocketmine\math\Vector3;
 
@@ -30,14 +31,7 @@ abstract class BasicDuels extends Mode {
     }
 
     /**
-     * @param array $teamsData
-     */
-    public function setTeams(array $teamsData): void {
-        $this->teams = $teamsData;
-    }
-
-    /**
-     * @return array|array[]
+     * @return Team[]
      */
     public function getTeams(): array {
         return $this->teams;
@@ -45,12 +39,13 @@ abstract class BasicDuels extends Mode {
 
     /**
      * @param Player $player
-     * @return int|null
+     *
+     * @return Team|null
      */
-    public function getPlayerTeam(Player $player): ?int {
-        for ($id = 0; $id < 2; $id++) {
-            if (isset($this->teams[$id][$player->getLowerCaseName()])) {
-                return $id;
+    public function getPlayerTeam(Player $player): ?Team {
+        foreach ($this->getTeams() as $team) {
+            if ($team->getPlayerID($player) != null) {
+                return $team;
             }
         }
 
@@ -58,19 +53,33 @@ abstract class BasicDuels extends Mode {
     }
 
     /**
+     * @param int $id
+     *
+     * @return Team|null
+     */
+    public function getTeam(int $id): ?Team {
+        return $this->teams[$id];
+    }
+
+    /**
      * @param Player $player
      * @return Player[]
      */
     public function getOpponent(Player $player): array {
-        $opponentId = $this->getPlayerTeam($player) === 1 ? 0 : 1;
-        $opponents = [];
+        $team = $this->getPlayerTeam($player);
 
-        /** @var Player $teamPlayers */
-        foreach ($this->teams[$opponentId] as $teamPlayers) {
-            $opponents[] = $teamPlayers->getName();
+        if ($team != null) {
+            $opponentId = $team->getId() === 2 ? 1 : 2;
+            $opponentTeam = $this->getTeam($opponentId);
+
+            if ($opponentTeam != null) {
+                return array_map(function ($player): string {
+                    return $player->getName();
+                }, $team->getPlayers());
+            }
         }
 
-        return $opponents;
+        return [];
     }
 
     /**
@@ -79,15 +88,33 @@ abstract class BasicDuels extends Mode {
      */
     public function getPos(Player $player): Vector3 {
         $data = $this->getSession()->getData();
-        $pos1 = $data->getPos1();
+        $team = $this->getPlayerTeam($player);
 
-        if (($teamId = $this->getPlayerTeam($player)) !== null) {
-            if ($teamId === 1) {
-                return $data->getPos2();
+        if ($team != null and $team->getId() === 1) {
+            return $data->getPos2();
+        }
+
+        return $data->getPos1();
+    }
+
+    /**
+     * @return Team
+     */
+    public function pickTeam(): Team {
+        $selectedTeam = null;
+
+        foreach ($this->getTeams() as $team) {
+            if ($selectedTeam === null) {
+                $selectedTeam = $team;
+                continue;
+            }
+
+            if (count($team->getPlayers()) < count($selectedTeam->getPlayers())) {
+                $selectedTeam = $team;
             }
         }
 
-        return $pos1;
+        return $selectedTeam;
     }
 
     /**
@@ -102,15 +129,9 @@ abstract class BasicDuels extends Mode {
      */
     public function onStageChange(int $stageId): void {
         if ($stageId === GameSession::RUNNING_STAGE) {
-            $maxSlots = $this->getSession()->getData()->isTeam() ? 2 : 1;
-
             foreach ($this->getSession()->getPlayers() as $player) {
-                for ($id = 0; $id < 2; $id++) {
-                    if (count($this->teams[$id]) < $maxSlots) {
-                        $this->teams[$id][$player->getLowerCaseName()] = $player;
-                        break;
-                    }
-                }
+                $team = $this->pickTeam();
+                $team->addPlayer($player);
             }
         }
     }

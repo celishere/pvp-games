@@ -21,10 +21,10 @@ use grpe\pvp\game\stages\EndingStage;
 use grpe\pvp\game\stages\RunningStage;
 use grpe\pvp\game\stages\WaitingStage;
 
+use pocketmine\Player;
+
 use pocketmine\item\Item;
 use pocketmine\math\Vector3;
-
-use pocketmine\Player;
 
 use pocketmine\nbt\tag\StringTag;
 
@@ -42,7 +42,7 @@ use InvalidArgumentException;
 class Utils {
 
     /**
-     * Создает дерикторию если её нет
+     * Создает директорию если её нет
      *
      * @param string $path
      * @param string $directory
@@ -55,6 +55,7 @@ class Utils {
 
     /**
      * @param string $path
+     *
      * @return array
      */
     public static function getArenaFiles(string $path): array {
@@ -71,6 +72,7 @@ class Utils {
 
     /**
      * @param string $rawVector
+     *
      * @return Vector3
      */
     public static function unpackRawVector(string $rawVector): Vector3 {
@@ -80,7 +82,7 @@ class Utils {
             return new Vector3((float) $loc[0], (float) $loc[1], (float) $loc[2]);
         }
 
-        throw new InvalidArgumentException('Неккоректная локация.');
+        throw new InvalidArgumentException('Некорректная локация.');
     }
 
     /**
@@ -96,6 +98,7 @@ class Utils {
 
     /**
      * @param string $packedXYZ
+     *
      * @return array
      */
     public static function unpackXYZ(string $packedXYZ): array {
@@ -105,6 +108,7 @@ class Utils {
     /**
      * @param int $id
      * @param GameSession $session
+     *
      * @return Stage
      */
     public static function getStageById(int $id, GameSession $session): Stage {
@@ -124,6 +128,7 @@ class Utils {
     /**
      * @param string $id
      * @param GameSession $session
+     *
      * @return Mode|BasicFFA
      */
     public static function getModeById(string $id, GameSession $session) {
@@ -148,6 +153,7 @@ class Utils {
      * @param Item $item
      * @param string $itemName
      * @param string $tagName
+     *
      * @return Item
      */
     public static function createNamedTagItem(Item $item, string $itemName, string $tagName): Item {
@@ -170,5 +176,21 @@ class Utils {
         $player->setFood(20);
         $player->setXpLevel(0);
         $player->setXpProgress(0);
+    }
+
+    /**
+     * @param int $time
+     *
+     * @return string
+     */
+    public static function convertTime(int $time): string {
+        $min = date('i', $time);
+        $sec = date('s', $time);
+
+        if ($min[0] === '0') {
+            $min = substr($min, 1);
+        }
+
+        return "$min:$sec";
     }
 }

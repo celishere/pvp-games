@@ -11,6 +11,7 @@ use grpe\pvp\player\PlayerData;
 use grpe\pvp\game\mode\BasicFFA;
 
 use pocketmine\Player;
+use pocketmine\utils\TextFormat;
 
 /**
  * Class ClassicFFA
@@ -40,9 +41,9 @@ class ClassicFFA extends BasicFFA {
                 $deaths = $playerData->getDeaths();
                 $ks = $playerData->getKillStreak();
                 $kd = $playerData->getKillDeath();
-                $ms = $playerData->getMaxKillStreak();
+                $maxKs = $playerData->getMaxKillStreak();
 
-                $player->sendPopup("Убийств: $kills | Смертей: $deaths | K/S: $ks | K/D: $kd | Max K/S: ". $ms);
+                $player->sendPopup(TextFormat::colorize("&fУбийств: &c$kills &8| &fСмертей: &e$deaths &8| &fK/S: &b$ks &8| &fK/D: &a$kd &8| &fMax K/S: &2". $maxKs));
             }
         }
     }

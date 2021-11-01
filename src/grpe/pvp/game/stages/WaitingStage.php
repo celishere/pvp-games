@@ -7,6 +7,8 @@ namespace grpe\pvp\game\stages;
 use grpe\pvp\game\Stage;
 use grpe\pvp\game\GameSession;
 
+use pocketmine\utils\TextFormat;
+
 /**
  * Class WaitingStage
  * @package grpe\pvp\game\stages
@@ -37,7 +39,7 @@ class WaitingStage extends Stage {
         $session = $this->getSession();
 
         foreach ($session->getPlayers() as $player) {
-            $player->sendPopup('Ожидание игроков...');
+            $player->sendPopup(TextFormat::YELLOW . 'Ожидание игроков...');
         }
 
         if ($session->getPlayersCount() >= $session->getData()->getMinPlayers()) {

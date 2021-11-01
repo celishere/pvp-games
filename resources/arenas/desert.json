@@ -1,0 +1,14 @@
+{
+  "name": "desert",
+  "mode": "classic",
+  "world": "desert",
+  "platform": "all",
+  "isTeam": true,
+  "countdown": 5,
+  "gameTime": 60,
+  "minPlayers": 4,
+  "maxPlayers": 4,
+  "waitingRoom": "-38.5:65:-31.5:desert:90:2",
+  "pos1": "-38.5:65:-9.5:desert:180:2",
+  "pos2": "-38.5:65:-53.5:desert:0:2"
+}

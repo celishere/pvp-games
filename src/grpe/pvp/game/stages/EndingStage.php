@@ -7,6 +7,8 @@ namespace grpe\pvp\game\stages;
 use grpe\pvp\game\Stage;
 use grpe\pvp\game\GameSession;
 
+use pocketmine\utils\TextFormat;
+
 /**
  * Class EndingStage
  * @package grpe\pvp\game\stages
@@ -23,6 +25,8 @@ class EndingStage extends Stage {
      * @param GameSession $session
      */
     public function __construct(GameSession $session) {
+        $this->setTime(10);
+
         parent::__construct($session);
     }
 
@@ -34,6 +38,16 @@ class EndingStage extends Stage {
     }
 
     public function onTick(): void {
-        $this->getSession()->reset();
+        $session = $this->getSession();
+        
+        $this->setTime($this->getTime() - 1);
+
+        if ($this->getTime() > 1) {
+            foreach ($session->getPlayers() as $player) {
+                $player->sendPopup(TextFormat::colorize("&aИгра перезапуститься через &e". $this->getTime() ." &aс."));
+            }
+        } else {
+            $session->reset();
+        }
     }
 }

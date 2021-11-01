@@ -15,6 +15,11 @@ namespace grpe\pvp\game;
  */
 abstract class Stage {
 
+    public const WAITING = 1;
+    public const COUNTDOWN = 2;
+    public const RUNNING = 3;
+    public const ENDING = 4;
+
     private GameSession $session;
 
     private int $time;

@@ -116,7 +116,7 @@ final class GameSession {
     public function addPlayer(Player $player): void {
         $this->players[$player->getLowerCaseName()] = $player;
 
-        $player->sendMessage("Присоединяемся к арене ". $this->getData()->getName() ."...");
+        $player->sendMessage(TextFormat::colorize("&aПрисоединяемся к арене &e". $this->getData()->getName() ."&a..."));
 
         $manager = Main::getPlayerDataManager();
         $data = $manager->getPlayerData($player);
@@ -129,22 +129,29 @@ final class GameSession {
 
         Utils::reset($player);
 
-        $player->getInventory()->setItem(8, Utils::createNamedTagItem(Item::get(Item::BED, 14), 'Выход', 'quit'));
-
         if ($this->getMode() instanceof FFAMode) {
             $this->getMode()->respawnPlayer($player);
+
+            foreach ($this->getPlayers() as $arenaPlayer) {
+                $arenaPlayer->sendMessage(TextFormat::colorize('&b' . $player->getName() . ' &fприсоединился.'));
+            }
         } else {
             /** Я без понятия, если дать заранее локацию, то после сбросы арены игрока перестанет переносить */
             $w = $this->getData()->getWaitingRoom();
 
             $pos = new Location($w->getX(), $w->getY(), $w->getZ(), 0.0, 0.0, $this->getLevel());
             $player->teleport($pos);
-        }
 
-        $player->sendMessage(TextFormat::GREEN. 'Присоединился.');
+            $player->getInventory()->setItem(8, Utils::createNamedTagItem(Item::get(Item::BED, 14), 'Выход', 'quit'));
 
-        foreach ($this->getPlayers() as $arenaPlayer) {
-            $arenaPlayer->sendMessage(TextFormat::colorize("&b". $player->getName() ." &fприсоединился."));
+            $gameData = $this->getData();
+            $max = $gameData->getMaxPlayers();
+
+            $now = count($this->players);
+
+            foreach ($this->getPlayers() as $arenaPlayer) {
+                $arenaPlayer->sendMessage(TextFormat::colorize('&b' . $player->getName() . ' &fприсоединился. &7(&e'. $now .'&8/&e' . $max . '&7)'));
+            }
         }
 
         Main::getInstance()->getServer()->getPluginManager()->callEvent(new PvPJoinEvent($player, $this->mode));
@@ -170,8 +177,19 @@ final class GameSession {
                 $player->teleport(Server::getInstance()->getDefaultLevel()->getSpawnLocation());
             }
 
-            foreach ($this->getPlayers() as $players) {
-                $players->sendMessage(TextFormat::colorize('&b' . $player->getName() . ' &fвышел.'));
+            if ($this->getMode() instanceof FFAMode) {
+                foreach ($this->getPlayers() as $players) {
+                    $players->sendMessage(TextFormat::colorize('&b' . $player->getName() . ' &fвышел.'));
+                }
+            } else {
+                $gameData = $this->getData();
+
+                $now = count($this->players) - 1;
+                $max = $gameData->getMaxPlayers();
+
+                foreach ($this->getPlayers() as $players) {
+                    $players->sendMessage(TextFormat::colorize('&b' . $player->getName() . ' &fвышел. &7(&e'. $now .'&8/&e' . $max . '&7)'));
+                }
             }
 
             Main::getInstance()->getServer()->getPluginManager()->callEvent(new PvPQuitEvent($player, $this->mode));
@@ -198,29 +216,28 @@ final class GameSession {
 
             if ($this->getStage() instanceof RunningStage) {
                 if ($mode instanceof BasicDuels) {
-                    $teamId = $mode->getPlayerTeam($player);
+                    $team = $mode->getPlayerTeam($player);
 
-                    if ($teamId !== null) {
-                        $teamsData = $mode->getTeams();
-                        unset($teamsData[$teamId][$player->getLowerCaseName()]);
+                    if ($team !== null) {
+                        $team->removePlayer($player);
 
-                        $mode->setTeams($teamsData);
-
-                        if (count($mode->getTeams()[$teamId]) < 1) {
+                        if (count($team->getPlayers()) < 1) {
                             $this->setStage(self::ENDING_STAGE);
 
-                            $winners = [];
+                            $message = null;
 
                             foreach ($mode->getTeams() as $team) {
-                                foreach ($team as $name => $player) {
-                                    $winners[] = $name;
-                                }
+                                $message = '&f' . (count($team->getPlayers()) > 1 ? 'Победители' : 'Победитель') . ': &7' . implode('&8, &7', array_map(function ($player): string {
+                                        return $player->getName();
+                                    }, $team->getPlayers()));
                             }
 
                             foreach ($this->getPlayers() as $players) {
-                                $players->sendMessage('Игра окончена.');
+                                $players->sendTitle(TextFormat::RED . "Игра окончена.");
 
-                                $players->sendMessage("Победители: ". implode("&7, &c", $winners));
+                                if ($message != null) {
+                                    $players->sendMessage(TextFormat::colorize($message));
+                                }
                             }
                         }
                     }

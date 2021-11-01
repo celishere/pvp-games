@@ -51,6 +51,7 @@ final class GameLoader {
                 }
 
                 if ($mode !== "ffa") {
+
                     $team = $arenaData["isTeam"] ?? null;
                     if ($team === null) {
                         $logger->warning("Тип арены не указан. Имя арены - $name");
@@ -63,9 +64,15 @@ final class GameLoader {
                         continue;
                     }
 
-                    $countdown = $arenaData["countdown"] ?? null;
+                    $countdown = $arenaData['countdown'] ?? null;
                     if ($countdown === null) {
                         $logger->warning("Countdown арены не указано. Имя арены - $name.");
+                        continue;
+                    }
+
+                    $gameTime = $arenaData['gameTime'] ?? null;
+                    if ($gameTime === null) {
+                        $logger->warning("GameTime арены не указано. Имя арены - $name.");
                         continue;
                     }
 
@@ -124,7 +131,7 @@ final class GameLoader {
                 if ($mode === "ffa") {
                     $gameData = new FFAGameData($name, $mode, $world, $pos1, $pos2);
                 } else {
-                    $gameData = new GameData($name, $mode, $world, $team, $platform, $countdown, $maxPlayers, $minPlayers, $waitingRoom, $pos1, $pos2);
+                    $gameData = new GameData($name, $mode, $world, $team, $platform, $countdown, $gameTime, $maxPlayers, $minPlayers, $waitingRoom, $pos1, $pos2);
                 }
 
                 if (!Server::getInstance()->loadLevel($world)) {
