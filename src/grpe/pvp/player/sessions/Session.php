@@ -120,10 +120,10 @@ class Session {
 
     public function onSave(): void {
         //todo переделать это
-
+/*
         foreach ([['games' => $this->games], ['wins', $this->wins], ['kills', $this->kills], ['deaths', $this->deaths]] as $item) {
             $request = new Request($this->getUsername(), $item[0]);
             $request->set($item[1]);
-        }
+        }*/
     }
 }

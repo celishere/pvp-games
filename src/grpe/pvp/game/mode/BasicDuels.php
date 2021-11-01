@@ -28,6 +28,8 @@ abstract class BasicDuels extends Mode {
      */
     public function __construct(GameSession $session) {
         $this->session = $session;
+
+        $this->initTeams();
     }
 
     /**
@@ -75,7 +77,7 @@ abstract class BasicDuels extends Mode {
             if ($opponentTeam != null) {
                 return array_map(function ($player): string {
                     return $player->getName();
-                }, $team->getPlayers());
+                }, $opponentTeam->getPlayers());
             }
         }
 

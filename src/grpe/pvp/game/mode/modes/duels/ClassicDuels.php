@@ -32,6 +32,8 @@ class ClassicDuels extends BasicDuels {
      * @param int $stageId
      */
     public function onStageChange(int $stageId): void {
+        parent::onStageChange($stageId);
+
         if ($stageId === GameSession::RUNNING_STAGE) {
             $contents = [I::get(I::IRON_SWORD), I::get(I::BOW), I::get(I::ARROW, 0, 32)];
             $armor_contents = [I::get(I::IRON_HELMET), I::get(I::IRON_CHESTPLATE), I::get(I::IRON_LEGGINGS), I::get(I::IRON_BOOTS)];

@@ -70,7 +70,7 @@ class PvPListener implements Listener {
      * @param PlayerJoinEvent $event
      */
     public function onJoin(PlayerJoinEvent $event): void {
-        //    Server::getInstance()->dispatchCommand($event->getPlayer(), 'join');
+            Server::getInstance()->dispatchCommand($event->getPlayer(), 'join classic');
         $player = $event->getPlayer();
 
         Utils::reset($player);
