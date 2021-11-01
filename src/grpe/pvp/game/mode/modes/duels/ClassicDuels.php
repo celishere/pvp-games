@@ -36,16 +36,7 @@ class ClassicDuels extends BasicDuels {
             $contents = [I::get(I::IRON_SWORD), I::get(I::BOW), I::get(I::ARROW, 0, 32)];
             $armor_contents = [I::get(I::IRON_HELMET), I::get(I::IRON_CHESTPLATE), I::get(I::IRON_LEGGINGS), I::get(I::IRON_BOOTS)];
 
-            $maxSlots = $this->getSession()->getData()->isTeam() ? 2 : 1;
-
             foreach ($this->getSession()->getPlayers() as $player) {
-                for ($id = 0; $id < 2; $id++) {
-                    if (count($this->teams[$id]) < $maxSlots) {
-                        $this->teams[$id][$player->getLowerCaseName()] = $player;
-                        break;
-                    }
-                }
-
                 $player->getInventory()->setContents($contents);
                 $player->getArmorInventory()->setContents($armor_contents);
             }
