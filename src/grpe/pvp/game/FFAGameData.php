@@ -21,6 +21,8 @@ final class FFAGameData {
     private string $mode;
     private string $world;
 
+    private string $platform;
+
     private Vector3 $pos1;
     private Vector3 $pos2;
 
@@ -29,13 +31,25 @@ final class FFAGameData {
      * @param string $name
      * @param string $mode
      * @param string $world
+     * @param string $platform
      * @param Vector3 $pos1
      * @param Vector3 $pos2
      */
-    public function __construct(string $name, string $mode, string $world, Vector3 $pos1, Vector3 $pos2) {
+    public function __construct(
+        string $name,
+        string $mode,
+        string $world,
+
+        string $platform,
+
+        Vector3 $pos1,
+        Vector3 $pos2
+    ) {
         $this->name = $name;
         $this->mode = $mode;
         $this->world = $world;
+
+        $this->platform = $platform;
 
         $this->pos1 = $pos1;
         $this->pos2 = $pos2;
@@ -56,6 +70,20 @@ final class FFAGameData {
     }
 
     /**
+     * @return string
+     */
+    public function getWorld(): string {
+        return $this->world;
+    }
+
+    /**
+     * @return string
+     */
+    public function getPlatform(): string {
+        return $this->platform;
+    }
+
+    /**
      * @return Vector3
      */
     public function getPos1(): Vector3 {
@@ -67,12 +95,5 @@ final class FFAGameData {
      */
     public function getPos2(): Vector3 {
         return $this->pos2;
-    }
-
-    /**
-     * @return string
-     */
-    public function getWorld(): string {
-        return $this->world;
     }
 }

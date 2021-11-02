@@ -48,11 +48,6 @@ final class GameSession {
     /** @var FFAMode|Mode */
     protected $mode;
 
-    public const WAITING_STAGE = 0;
-    public const COUNTDOWN_STAGE = 1;
-    public const RUNNING_STAGE = 2;
-    public const ENDING_STAGE = 3;
-
     /**
      * Game constructor.
      * @param GameData|FFAGameData $gameData
@@ -62,7 +57,7 @@ final class GameSession {
         $this->mode = Utils::getModeById($gameData->getMode(), $this);
 
         if (!$gameData instanceof FFAGameData) {
-            $this->setStage(self::WAITING_STAGE);
+            $this->setStage(Stage::WAITING);
         }
     }
 
@@ -129,25 +124,21 @@ final class GameSession {
 
         Utils::reset($player);
 
+        $now = count($this->players);
+
         if ($this->getMode() instanceof FFAMode) {
             $this->getMode()->respawnPlayer($player);
 
             foreach ($this->getPlayers() as $arenaPlayer) {
-                $arenaPlayer->sendMessage(TextFormat::colorize('&b' . $player->getName() . ' &fприсоединился.'));
+                $arenaPlayer->sendMessage(TextFormat::colorize('&b' . $player->getName() . ' &fприсоединился. Игроков: &a'. $now));
             }
         } else {
-            /** Я без понятия, если дать заранее локацию, то после сбросы арены игрока перестанет переносить */
-            $w = $this->getData()->getWaitingRoom();
-
-            $pos = new Location($w->getX(), $w->getY(), $w->getZ(), 0.0, 0.0, $this->getLevel());
-            $player->teleport($pos);
+            $player->teleport($this->getData()->getWaitingRoom());
 
             $player->getInventory()->setItem(8, Utils::createNamedTagItem(Item::get(Item::BED, 14), 'Выход', 'quit'));
 
             $gameData = $this->getData();
             $max = $gameData->getMaxPlayers();
-
-            $now = count($this->players);
 
             foreach ($this->getPlayers() as $arenaPlayer) {
                 $arenaPlayer->sendMessage(TextFormat::colorize('&b' . $player->getName() . ' &fприсоединился. &7(&e'. $now .'&8/&e' . $max . '&7)'));
@@ -163,36 +154,36 @@ final class GameSession {
      * @param string|null $deathMessage
      */
     public function removePlayer(Player $player, bool $killed = false, string $deathMessage = null): void {
+        $mode = $this->getMode();
+        
         $player->setHealth(20);
-        $player->setMaxHealth(20);
-
-        var_dump($killed);
+        $player->setFood(20);
 
         if (!$killed) {
-            Main::getPlayerDataManager()->unregisterPlayer($player);
+            unset($this->players[$player->getLowerCaseName()]);
 
+            Main::getPlayerDataManager()->unregisterPlayer($player);
             Utils::reset($player);
 
             if ($player->isOnline()) {
                 $player->teleport(Server::getInstance()->getDefaultLevel()->getSpawnLocation());
             }
 
+            $now = count($this->players);
+
             if ($this->getMode() instanceof FFAMode) {
                 foreach ($this->getPlayers() as $players) {
-                    $players->sendMessage(TextFormat::colorize('&b' . $player->getName() . ' &fвышел.'));
+                    $players->sendMessage(TextFormat::colorize('&b' . $player->getName() . ' &fвышел. Игроков: &a'. $now));
                 }
             } else {
                 $gameData = $this->getData();
 
-                $now = count($this->players) - 1;
                 $max = $gameData->getMaxPlayers();
 
                 foreach ($this->getPlayers() as $players) {
                     $players->sendMessage(TextFormat::colorize('&b' . $player->getName() . ' &fвышел. &7(&e'. $now .'&8/&e' . $max . '&7)'));
                 }
             }
-
-            Main::getInstance()->getServer()->getPluginManager()->callEvent(new PvPQuitEvent($player, $this->mode));
         } else {
             foreach ($this->getPlayers() as $players) {
                 if ($deathMessage !== null) {
@@ -201,20 +192,21 @@ final class GameSession {
                     $players->sendMessage(TextFormat::colorize('&b' . $player->getName() . ' &fубит.'));
                 }
             }
+
+            if ($mode instanceof FFAMode) {
+                $mode->respawnPlayer($player);
+                return;
+            } else {
+                unset($this->players[$player->getLowerCaseName()]);
+
+                $player->setGamemode(3);
+            }
         }
 
-        $mode = $this->getMode();
+        if ($mode instanceof Mode) {
+            $stage = $this->getStage();
 
-        if ($mode instanceof FFAMode) {
-            $mode->respawnPlayer($player);
-        } else {
-            $player->setGamemode(3);
-
-            unset($this->players[$player->getLowerCaseName()]);
-
-            Main::getPlayerDataManager()->unregisterPlayer($player);
-
-            if ($this->getStage() instanceof RunningStage) {
+            if ($stage instanceof RunningStage) {
                 if ($mode instanceof BasicDuels) {
                     $team = $mode->getPlayerTeam($player);
 
@@ -222,7 +214,9 @@ final class GameSession {
                         $team->removePlayer($player);
 
                         if (count($team->getPlayers()) < 1) {
-                            $this->setStage(self::ENDING_STAGE);
+                            $mode->checkTeam($team);
+
+                            $this->setStage(Stage::ENDING);
 
                             $message = null;
 
@@ -233,7 +227,7 @@ final class GameSession {
                             }
 
                             foreach ($this->getPlayers() as $players) {
-                                $players->sendTitle(TextFormat::RED . "Игра окончена.");
+                                $players->sendTitle(TextFormat::RED . 'Игра окончена.');
 
                                 if ($message != null) {
                                     $players->sendMessage(TextFormat::colorize($message));
@@ -267,7 +261,7 @@ final class GameSession {
 
         $this->players = [];
 
-        $this->setStage(self::WAITING_STAGE);
+        $this->setStage(Stage::WAITING);
 
         if ($this->getLevel()->unload()) {
             if (!Server::getInstance()->loadLevel($this->getData()->getWorld())) {

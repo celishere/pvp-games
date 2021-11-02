@@ -6,11 +6,16 @@ namespace grpe\pvp\game\mode\modes\duels;
 
 use grpe\pvp\Main;
 
+use grpe\pvp\game\Stage;
 use grpe\pvp\game\GameSession;
+
 use grpe\pvp\game\mode\BasicDuels;
+
 use grpe\pvp\game\task\RemoveCachedBlocks;
 
 use grpe\pvp\utils\Utils;
+
+use pocketmine\utils\TextFormat;
 
 /**
  * Class StickDuels
@@ -23,7 +28,7 @@ use grpe\pvp\utils\Utils;
  */
 class StickDuels extends BasicDuels {
 
-    private array $scores = [0 => 0, 1 => 0];
+    private array $scores = [1 => 0, 2 => 0];
 
     private array $cachedBlocks = [];
 
@@ -86,8 +91,28 @@ class StickDuels extends BasicDuels {
     public function addScore(int $teamId): void {
         $this->scores[$teamId]++;
 
+        $this->onReset();
+
         if ($this->scores[$teamId] >= 5) {
-            $this->getSession()->setStage(GameSession::ENDING_STAGE);
+            $this->checkTeam($this->getTeam($teamId));
+            $this->getSession()->setStage(Stage::ENDING);
+
+            $message = null;
+
+            foreach ($this->getTeams() as $team) {
+                $message = '&f' . (count($team->getPlayers()) > 1 ? 'Победители' : 'Победитель') . ': &7' . implode('&8, &7', array_map(function ($player): string {
+                        return $player->getName();
+                    }, $team->getPlayers()));
+            }
+
+            foreach ($this->getSession()->getPlayers() as $players) {
+                $players->sendTitle(TextFormat::RED . 'Игра окончена.');
+
+                if ($message != null) {
+                    $players->sendMessage(TextFormat::colorize($message));
+                }
+            }
+
             $this->resetMap();
         }
     }
@@ -101,8 +126,10 @@ class StickDuels extends BasicDuels {
 
         foreach ($session->getPlayers() as $player) {
             $player->setGamemode(0);
+            
             $player->setHealth(20);
             $player->setFood(20);
+
             $player->teleport($this->getPos($player));
         }
     }

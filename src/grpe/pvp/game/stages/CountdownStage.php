@@ -25,7 +25,7 @@ class CountdownStage extends Stage {
      * @param GameSession $session
      */
     public function __construct(GameSession $session) {
-        $this->setTime($session->getData()->getCountdown());
+        $this->setTime($session->getData()->getCountdown() + 1);
 
         parent::__construct($session);
     }
@@ -34,24 +34,24 @@ class CountdownStage extends Stage {
      * @return int
      */
     public function getId(): int {
-        return GameSession::COUNTDOWN_STAGE;
+        return Stage::COUNTDOWN;
     }
 
     public function onTick(): void {
         $session = $this->getSession();
 
-        if ($this->getTime() > 1) {
-            if ($session->getPlayersCount() >= $session->getData()->getMinPlayers()) {
-                $this->setTime($this->getTime() - 1);
+        $this->setTime($this->getTime() - 1);
 
+        if ($this->getTime() > 0) {
+            if ($session->getPlayersCount() >= $session->getData()->getMaxPlayers()) {
                 foreach ($session->getPlayers() as $player) {
                     $player->sendPopup(TextFormat::colorize('&aИгра начнется через &e' . $this->getTime() . ' &aс.'));
                 }
             } else {
-                $session->setStage(GameSession::WAITING_STAGE);
+                $session->setStage(Stage::WAITING);
             }
         } else {
-            $session->setStage(GameSession::RUNNING_STAGE);
+            $session->setStage(Stage::RUNNING);
         }
     }
 }

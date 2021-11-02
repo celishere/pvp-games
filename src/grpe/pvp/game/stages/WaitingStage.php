@@ -32,7 +32,7 @@ class WaitingStage extends Stage {
      * @return int
      */
     public function getId(): int {
-        return GameSession::WAITING_STAGE;
+        return self::WAITING;
     }
 
     public function onTick(): void {
@@ -42,8 +42,8 @@ class WaitingStage extends Stage {
             $player->sendPopup(TextFormat::YELLOW . 'Ожидание игроков...');
         }
 
-        if ($session->getPlayersCount() >= $session->getData()->getMinPlayers()) {
-            $session->setStage(GameSession::COUNTDOWN_STAGE);
+        if ($session->getPlayersCount() >= $session->getData()->getMaxPlayers()) {
+            $session->setStage(self::COUNTDOWN);
         }
     }
 }

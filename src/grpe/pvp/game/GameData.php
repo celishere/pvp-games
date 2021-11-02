@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace grpe\pvp\game;
 
-use pocketmine\math\Vector3;
+use pocketmine\level\Location;
 
 /**
  * Class GameData
@@ -28,29 +28,43 @@ final class GameData {
     private int $gameTime;
 
     private int $maxPlayers;
-    private int $minPlayers;
 
-    private Vector3 $waitingRoom;
-    private Vector3 $pos1;
-    private Vector3 $pos2;
+    private Location $waitingRoom;
+    private Location $pos1;
+    private Location $pos2;
 
     /**
      * GameData constructor.
      *
-     * @param string  $name
-     * @param string  $mode
-     * @param string  $world
-     * @param bool    $team
-     * @param string  $platform
-     * @param int     $countdown
-     * @param int     $gameTime
-     * @param int     $maxPlayers
-     * @param int     $minPlayers
-     * @param Vector3 $waitingRoom
-     * @param Vector3 $pos1
-     * @param Vector3 $pos2
+     * @param string   $name
+     * @param string   $mode
+     * @param string   $world
+     * @param bool     $team
+     * @param string   $platform
+     * @param int      $countdown
+     * @param int      $gameTime
+     * @param int      $maxPlayers
+     * @param Location $waitingRoom
+     * @param Location $pos1
+     * @param Location $pos2
      */
-    public function __construct(string $name, string $mode, string $world, bool $team, string $platform, int $countdown, int $gameTime, int $maxPlayers, int $minPlayers, Vector3 $waitingRoom, Vector3 $pos1, Vector3 $pos2) {
+    public function __construct(
+        string $name,
+        string $mode,
+        string $world,
+
+        bool $team,
+
+        string $platform,
+
+        int $countdown,
+        int $gameTime,
+        int $maxPlayers,
+
+        Location $waitingRoom,
+        Location $pos1,
+        Location $pos2
+    ) {
         $this->name = $name;
         $this->mode = $mode;
         $this->world = $world;
@@ -62,7 +76,6 @@ final class GameData {
         $this->countdown = $countdown;
         $this->gameTime = $gameTime;
 
-        $this->minPlayers = $minPlayers;
         $this->maxPlayers = $maxPlayers;
 
         $this->waitingRoom = $waitingRoom;
@@ -128,30 +141,23 @@ final class GameData {
     }
 
     /**
-     * @return int
+     * @return Location
      */
-    public function getMinPlayers(): int {
-        return $this->minPlayers;
-    }
-
-    /**
-     * @return Vector3
-     */
-    public function getWaitingRoom(): Vector3 {
+    public function getWaitingRoom(): Location {
         return $this->waitingRoom;
     }
 
     /**
-     * @return Vector3
+     * @return Location
      */
-    public function getPos1(): Vector3 {
+    public function getPos1(): Location {
         return $this->pos1;
     }
 
     /**
-     * @return Vector3
+     * @return Location
      */
-    public function getPos2(): Vector3 {
+    public function getPos2(): Location {
         return $this->pos2;
     }
 }

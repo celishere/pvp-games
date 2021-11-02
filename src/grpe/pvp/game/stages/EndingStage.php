@@ -25,7 +25,7 @@ class EndingStage extends Stage {
      * @param GameSession $session
      */
     public function __construct(GameSession $session) {
-        $this->setTime(10);
+        $this->setTime(11);
 
         parent::__construct($session);
     }
@@ -34,7 +34,7 @@ class EndingStage extends Stage {
      * @return int
      */
     public function getId(): int {
-        return GameSession::ENDING_STAGE;
+        return Stage::ENDING;
     }
 
     public function onTick(): void {
@@ -42,7 +42,7 @@ class EndingStage extends Stage {
         
         $this->setTime($this->getTime() - 1);
 
-        if ($this->getTime() > 1) {
+        if ($this->getTime() > 0) {
             foreach ($session->getPlayers() as $player) {
                 $player->sendPopup(TextFormat::colorize("&aИгра перезапуститься через &e". $this->getTime() ." &aс."));
             }

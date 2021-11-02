@@ -20,6 +20,8 @@ class Session {
 
     private string $username;
 
+    private int $osId = 0; //unknown
+
     private int $games = 0;
     private int $wins = 0;
     private int $kills = 0;
@@ -60,6 +62,20 @@ class Session {
      */
     public function getUsername(): string {
         return $this->username;
+    }
+
+    /**
+     * @param int $id
+     */
+    public function setOsId(int $id): void {
+        $this->osId = $id;
+    }
+
+    /**
+     * @return int
+     */
+    public function getOsId(): int {
+        return $this->osId;
     }
 
     /**

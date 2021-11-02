@@ -29,7 +29,7 @@ class RunningStage extends Stage {
      * @param GameSession $session
      */
     public function __construct(GameSession $session) {
-        $this->setTime($session->getData()->getGameTime());
+        $this->setTime($session->getData()->getGameTime() + 1);
 
         foreach ($session->getPlayers() as $player) {
             $enemy = implode("&7, &c", $session->getMode()->getOpponent($player));
@@ -47,29 +47,35 @@ class RunningStage extends Stage {
      * @return int
      */
     public function getId(): int {
-        return GameSession::RUNNING_STAGE;
+        return Stage::RUNNING;
     }
 
     public function onTick(): void {
         $session = $this->getSession();
 
-        if ($this->getTime() > 1) {
+        $this->setTime($this->getTime() - 1);
+
+        if ($this->getTime() > 0) {
             $mode = $session->getMode();
             $message = TextFormat::colorize("&eИгра закончится через &b" . Utils::convertTime($this->getTime()));
 
             if ($mode instanceof StickDuels) {
                 foreach ($mode->getScores() as $teamId => $score) {
-                    $message .= TextFormat::colorize("&fКоманда &e". $teamId ." &7- &b". $score ." &fочков.");
+                    $message .= TextFormat::colorize("\n&fКоманда &e". $teamId ." &7- &b". $score ." &fочков.");
                 }
             }
-
-            $this->setTime($this->getTime() - 1);
 
             foreach ($session->getPlayers() as $player) {
                 $player->sendPopup($message);
             }
         } else {
-            $session->setStage(GameSession::ENDING_STAGE);
+            foreach ($session->getPlayers() as $player) {
+                $player->sendTitle(TextFormat::YELLOW . "Ничья!");
+                
+                Utils::reset($player);
+            }
+
+            $session->setStage(Stage::ENDING);
         }
     }
 }

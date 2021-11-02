@@ -50,17 +50,24 @@ final class GameLoader {
                     continue;
                 }
 
-                if ($mode !== "ffa") {
+                $platform = $arenaData['platform'] ?? null;
+                if ($platform === null) {
+                    $logger->warning("Платформа арены не указана. Имя арены - $name");
+                    continue;
+                }
 
+                if (!Server::getInstance()->loadLevel($world)) {
+                    $logger->warning("Мир не существует. Имя арены - $name.");
+                    continue;
+                }
+
+                $level = Server::getInstance()->getLevelByName($world);
+                $level->setAutoSave(false);
+
+                if ($mode !== "ffa") {
                     $team = $arenaData["isTeam"] ?? null;
                     if ($team === null) {
                         $logger->warning("Тип арены не указан. Имя арены - $name");
-                        continue;
-                    }
-
-                    $platform = $arenaData["platform"] ?? null;
-                    if ($platform === null) {
-                        $logger->warning("Платформа арены не указана. Имя арены - $name");
                         continue;
                     }
 
@@ -73,12 +80,6 @@ final class GameLoader {
                     $gameTime = $arenaData['gameTime'] ?? null;
                     if ($gameTime === null) {
                         $logger->warning("GameTime арены не указано. Имя арены - $name.");
-                        continue;
-                    }
-
-                    $minPlayers = $arenaData["minPlayers"] ?? null;
-                    if ($minPlayers === null) {
-                        $logger->warning("Мин. кол-во игроков арены не указано. Имя арены - $name.");
                         continue;
                     }
 
@@ -95,8 +96,8 @@ final class GameLoader {
                     }
 
                     try {
-                        $waitingRoom = Utils::unpackRawVector($waitingRoomRaw);
-                    } catch (InvalidArgumentException $e) {
+                        $waitingRoom = Utils::unpackLocation($waitingRoomRaw, $level);
+                    } catch (\Exception $e) {
                         $logger->warning("Была указана некорректная локация. Имя арены - $name.");
                         continue;
                     }
@@ -109,8 +110,8 @@ final class GameLoader {
                 }
 
                 try {
-                    $pos1 = Utils::unpackRawVector($pos1Raw);
-                } catch (InvalidArgumentException $e) {
+                    $pos1 = Utils::unpackLocation($pos1Raw, $level);
+                } catch (\Exception $e) {
                     $logger->warning("Была указана некорректная локация. Имя арены - $name.");
                     continue;
                 }
@@ -122,24 +123,17 @@ final class GameLoader {
                 }
 
                 try {
-                    $pos2 = Utils::unpackRawVector($pos2Raw);
-                } catch (InvalidArgumentException $e) {
+                    $pos2 = Utils::unpackLocation($pos2Raw, $level);
+                } catch (\Exception $e) {
                     $logger->warning("Была указана некорректная локация. Имя арены - $name.");
                     continue;
                 }
 
                 if ($mode === "ffa") {
-                    $gameData = new FFAGameData($name, $mode, $world, $pos1, $pos2);
+                    $gameData = new FFAGameData($name, $mode, $world, $platform, $pos1, $pos2);
                 } else {
-                    $gameData = new GameData($name, $mode, $world, $team, $platform, $countdown, $gameTime, $maxPlayers, $minPlayers, $waitingRoom, $pos1, $pos2);
+                    $gameData = new GameData($name, $mode, $world, $team, $platform, $countdown, $gameTime, $maxPlayers, $waitingRoom, $pos1, $pos2);
                 }
-
-                if (!Server::getInstance()->loadLevel($world)) {
-                    $logger->warning("Мир не существует. Имя арены - $name.");
-                    continue;
-                }
-
-                Server::getInstance()->getLevelByName($world)->setAutoSave(false);
 
                 $manager->addGame($gameData);
             }

@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace grpe\pvp\utils;
 
+use Exception;
+use ReflectionException;
+
 use grpe\pvp\game\GameSession;
 
 use grpe\pvp\game\mode\Mode;
@@ -24,11 +27,11 @@ use grpe\pvp\game\stages\WaitingStage;
 use pocketmine\Player;
 
 use pocketmine\item\Item;
-use pocketmine\math\Vector3;
+
+use pocketmine\level\Level;
+use pocketmine\level\Location;
 
 use pocketmine\nbt\tag\StringTag;
-
-use InvalidArgumentException;
 
 /**
  * Class Utils
@@ -47,8 +50,8 @@ class Utils {
      * @param string $path
      * @param string $directory
      */
-    public static function createDirectory(string $path, string $directory = ""): void{
-        if(!file_exists($path . $directory)){
+    public static function createDirectory(string $path, string $directory = ""): void {
+        if (!file_exists($path . $directory)) {
             @mkdir($path . $directory);
         }
     }
@@ -71,18 +74,20 @@ class Utils {
     }
 
     /**
-     * @param string $rawVector
+     * @param string $pos
+     * @param Level  $level
      *
-     * @return Vector3
+     * @return Location
+     * @throws Exception
      */
-    public static function unpackRawVector(string $rawVector): Vector3 {
-        $loc = explode(':', $rawVector);
+    public static function unpackLocation(string $pos, Level $level): Location {
+        $data = explode('_', $pos);
 
-        if (count($loc) >= 3) {
-            return new Vector3((float) $loc[0], (float) $loc[1], (float) $loc[2]);
+        if (count($data) < 5) {
+            throw new ReflectionException('Недостаточно данных.');
         }
 
-        throw new InvalidArgumentException('Некорректная локация.');
+        return new Location((float) $data[0], (float) $data[1], (float) $data[2], (float) $data[3], (float) $data[4], $level);
     }
 
     /**
@@ -114,13 +119,13 @@ class Utils {
     public static function getStageById(int $id, GameSession $session): Stage {
         switch ($id) {
             default:
-            case 0:
+            case Stage::WAITING:
                 return new WaitingStage($session);
-            case 1:
+            case Stage::COUNTDOWN:
                 return new CountdownStage($session);
-            case 2:
+            case Stage::RUNNING:
                 return new RunningStage($session);
-            case 3:
+            case Stage::ENDING:
                 return new EndingStage($session);
         }
     }

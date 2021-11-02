@@ -36,16 +36,71 @@ abstract class Mode {
     abstract public function getSession(): GameSession;
 
     /**
+     * @return Team[]
+     */
+    public function getTeams(): array {
+        return $this->teams;
+    }
+
+    /**
+     * @param Player $player
+     *
+     * @return Team|null
+     */
+    public function getPlayerTeam(Player $player): ?Team {
+        foreach ($this->getTeams() as $team) {
+            if ($team->getPlayerID($player) != null) {
+                return $team;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * @param int $id
+     *
+     * @return Team|null
+     */
+    public function getTeam(int $id): ?Team {
+        return $this->teams[$id];
+    }
+
+    /**
      * @param Player $player
      * @return Player[]
      */
-    abstract public function getOpponent(Player $player): array;
+    public function getOpponent(Player $player): array {
+        $team = $this->getPlayerTeam($player);
+
+        if ($team != null) {
+            $opponentId = $team->getId() === 2 ? 1 : 2;
+            $opponentTeam = $this->getTeam($opponentId);
+
+            if ($opponentTeam != null) {
+                return array_map(function ($player): string {
+                    return $player->getName();
+                }, $opponentTeam->getPlayers());
+            }
+        }
+
+        return [];
+    }
 
     /**
      * @param Player $player
      * @return Vector3
      */
-    abstract public function getPos(Player $player): Vector3;
+    public function getPos(Player $player): Vector3 {
+        $data = $this->getSession()->getData();
+        $team = $this->getPlayerTeam($player);
+
+        if ($team != null and $team->getId() === 2) {
+            return $data->getPos2();
+        }
+
+        return $data->getPos1();
+    }
 
     /**
      * @param int $stageId
@@ -53,13 +108,33 @@ abstract class Mode {
     abstract public function onStageChange(int $stageId): void;
 
     /**
-     * @return Team[]
+     * @param Team|null $team
      */
-    abstract public function getTeams(): array;
+    public function checkTeam(?Team $team): void {
+        if ($team != null) {
+            if (count($team->getPlayers()) === 0) {
+                unset($this->teams[$team->getId()]);
+            }
+        }
+    }
 
     /**
-     * @param Player $player
-     * @return Team|null
+     * @return Team
      */
-    abstract public function getPlayerTeam(Player $player): ?Team;
+    public function pickTeam(): Team {
+        $selectedTeam = null;
+
+        foreach ($this->getTeams() as $team) {
+            if ($selectedTeam === null) {
+                $selectedTeam = $team;
+                continue;
+            }
+
+            if (count($team->getPlayers()) < count($selectedTeam->getPlayers())) {
+                $selectedTeam = $team;
+            }
+        }
+
+        return $selectedTeam;
+    }
 }

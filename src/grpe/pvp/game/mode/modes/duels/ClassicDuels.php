@@ -7,6 +7,7 @@ namespace grpe\pvp\game\mode\modes\duels;
 use grpe\pvp\game\mode\BasicDuels;
 use grpe\pvp\game\GameSession;
 
+use grpe\pvp\game\Stage;
 use pocketmine\item\Item as I;
 
 /**
@@ -34,7 +35,7 @@ class ClassicDuels extends BasicDuels {
     public function onStageChange(int $stageId): void {
         parent::onStageChange($stageId);
 
-        if ($stageId === GameSession::RUNNING_STAGE) {
+        if ($stageId === Stage::RUNNING) {
             $contents = [I::get(I::IRON_SWORD), I::get(I::BOW), I::get(I::ARROW, 0, 32)];
             $armor_contents = [I::get(I::IRON_HELMET), I::get(I::IRON_CHESTPLATE), I::get(I::IRON_LEGGINGS), I::get(I::IRON_BOOTS)];
 

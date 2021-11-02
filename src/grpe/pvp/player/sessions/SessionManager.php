@@ -15,14 +15,8 @@ use pocketmine\Player;
  */
 final class SessionManager {
 
+    /** @var Session[] */
     private array $sessions = [];
-
-    /**
-     * @param Player $player
-     */
-    public function createSession(Player $player): void {
-        $this->sessions[$player->getLowerCaseName()] = new Session($player);
-    }
 
     /**
      * @param Player $player
@@ -30,7 +24,7 @@ final class SessionManager {
      */
     public function getSession(Player $player): Session {
         if (!isset($this->sessions[$player->getLowerCaseName()])) {
-            $this->createSession($player);
+            $this->sessions[$player->getLowerCaseName()] = new Session($player);
         }
 
         return $this->sessions[$player->getLowerCaseName()];

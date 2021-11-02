@@ -7,6 +7,7 @@ namespace grpe\pvp\command;
 use grpe\pvp\Main;
 use grpe\pvp\game\GameSession;
 
+use grpe\pvp\player\PlayerData;
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
 
@@ -44,9 +45,20 @@ class JoinCommand extends Command {
         if ($sender instanceof Player) {
             $mode = $args[0] ?? 'sumo';
 
-            $gameSession = Main::getGameManager()->findGame($mode, 0); //todo: вызывай функцию из ядра
+            $playerSession = Main::getSessionManager()->getSession($sender);
+            $gameSession = Main::getGameManager()->findGame($mode, $playerSession->getOsId());
 
             if ($gameSession instanceof GameSession) {
+                $playerData = Main::getPlayerDataManager()->getPlayerData($sender);
+
+                if ($playerData instanceof PlayerData) {
+                    $oldSession = $playerData->getSession();
+
+                    if ($oldSession instanceof GameSession) {
+                        $oldSession->removePlayer($sender);
+                    }
+                }
+
                 $gameSession->addPlayer($sender);
                 return true;
             }

@@ -6,6 +6,7 @@ namespace grpe\pvp\game;
 
 use grpe\pvp\game\mode\Mode;
 
+use grpe\pvp\utils\DeviceFilter;
 use pocketmine\Player;
 
 /**
@@ -66,24 +67,37 @@ final class GameManager {
      */
     public function findGame(string $mode, int $platform = 0): ?GameSession {
         foreach ($this->games as $game) {
+            $checkPlatform = function (GameSession $game, int $platform): bool {
+                var_dump($game->getPlatform());
+                if ($game->getPlatform() != 'all') {
+                    if (!DeviceFilter::isAllow($game->getPlatform(), $platform)) {
+                        return false;
+                    }
+                }
+
+                return true;
+            };
+
             $data = $game->getData();
 
             if ($data->getMode() === $mode) {
                 if ($game->getMode() instanceof Mode) {
                     $stageId = $game->getStage()->getId();
 
-                    if ($stageId === GameSession::WAITING_STAGE or $stageId === GameSession::COUNTDOWN_STAGE) {
+                    if ($stageId === Stage::WAITING or $stageId === Stage::COUNTDOWN) {
                         if ($game->getPlayersCount() < $data->getMaxPlayers()) {
-                            if ($game->getPlatform() !== 'all') {
-                                if ($game->getPlatform() != $platform) {
-                                    break;
-                                }
+                            if (!$checkPlatform($game, $platform)) {
+                                break;
                             }
 
                             return $game;
                         }
                     }
                 } else {
+                    if (!$checkPlatform($game, $platform)) {
+                        break;
+                    }
+
                     return $game;
                 }
             }
