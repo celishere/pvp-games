@@ -68,7 +68,6 @@ final class GameManager {
     public function findGame(string $mode, int $platform = 0): ?GameSession {
         foreach ($this->games as $game) {
             $checkPlatform = function (GameSession $game, int $platform): bool {
-                var_dump($game->getPlatform());
                 if ($game->getPlatform() != 'all') {
                     if (!DeviceFilter::isAllow($game->getPlatform(), $platform)) {
                         return false;

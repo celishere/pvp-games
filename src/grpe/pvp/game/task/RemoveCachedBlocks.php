@@ -47,10 +47,7 @@ class RemoveCachedBlocks extends Task {
         $blocks = [];
 
         foreach ($mode->getCachedBlocks() as $cachedBlock => $data) {
-            var_dump($data);
-            var_dump($cachedBlock);
             [$x, $y, $z] = Utils::unpackXYZ($cachedBlock);
-            var_dump($x, $y, $z);
             [$id, $meta] = $data;
 
             $blocks[] = Block::get($id, $meta, new Position((int) $x, (int) $y, (int) $z, $this->level));
