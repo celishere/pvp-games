@@ -32,24 +32,16 @@ class Team {
 
     /**
      * @param Player $player
-     *
-     * @return int
      */
-    public function addPlayer(Player $player): int {
-        $this->players[$id = $this->nextPlayerID()] = $player;
-
-        return $id;
+    public function addPlayer(Player $player): void {
+        $this->players[$player->getId()] = $player;
     }
 
     /**
      * @param Player $player
      */
     public function removePlayer(Player $player): void {
-        $id = $this->getPlayerID($player);
-
-        if ($id != null) {
-            unset($this->players[$id]);
-        }
+        unset($this->players[$player->getId()]);
     }
 
     /**
@@ -59,21 +51,6 @@ class Team {
      */
     public function findPlayer(int $id): ?Player {
         return $this->players[$id] ?? null;
-    }
-
-    /**
-     * @param Player $player
-     *
-     * @return int|null
-     */
-    public function getPlayerID(Player $player): ?int {
-        foreach ($this->players as $id => $playerCache) {
-            if ($player->getId() === $playerCache->getId()) {
-                return $id;
-            }
-        }
-
-        return null;
     }
 
     /**
@@ -88,12 +65,5 @@ class Team {
      */
     public function getId(): int {
         return $this->id;
-    }
-
-    /**
-     * @return int
-     */
-    private function nextPlayerID(): int {
-        return count($this->players) + 1;
     }
 }

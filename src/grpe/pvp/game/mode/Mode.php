@@ -49,7 +49,7 @@ abstract class Mode {
      */
     public function getPlayerTeam(Player $player): ?Team {
         foreach ($this->getTeams() as $team) {
-            if ($team->getPlayerID($player) != null) {
+            if ($team->findPlayer($player->getId()) != null) {
                 return $team;
             }
         }
