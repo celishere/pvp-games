@@ -9,7 +9,7 @@ use grpe\pvp\game\GameSession;
 
 use grpe\pvp\utils\Utils;
 
-use grpe\pvp\game\mode\modes\duels\StickDuels;
+use grpe\pvp\game\mode\duels\StickDuels;
 
 use pocketmine\utils\TextFormat;
 
@@ -19,7 +19,7 @@ use pocketmine\utils\TextFormat;
  *
  * @author celis <celishere@gmail.com> <Telegram:@celishere>
  *
- * @version 1.0.0
+ * @version 1.0.1
  * @since   1.0.0
  */
 class RunningStage extends Stage {
@@ -34,7 +34,12 @@ class RunningStage extends Stage {
         foreach ($session->getPlayers() as $player) {
             $enemy = implode("&7, &c", $session->getMode()->getOpponent($player));
 
-            $player->teleport($session->getMode()->getPos($player));
+            Utils::reset($player);
+
+            $player->getInventory()->setContents($session->getMode()->getItems());
+            $player->getArmorInventory()->setContents($session->getMode()->getArmor()); //нет в 1.1
+
+            $player->teleport($session->getMode()->getSpawn($player));
 
             $player->sendMessage(TextFormat::GREEN. 'Игра началась.');
             $player->sendMessage(TextFormat::colorize(($session->getData()->isTeam() ? 'Оппоненты' : 'Оппонент') . '&7: &c'. $enemy));

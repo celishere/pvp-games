@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace grpe\pvp\game;
 
 use grpe\pvp\game\mode\Mode;
-
 use grpe\pvp\utils\DeviceFilter;
+
 use pocketmine\Player;
 
 /**
@@ -15,7 +15,7 @@ use pocketmine\Player;
  *
  * @author celis <celishere@gmail.com> <Telegram:@celishere>
  *
- * @version 1.0.0
+ * @version 1.0.1
  * @since   1.0.0
  */
 final class GameManager {

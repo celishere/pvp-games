@@ -7,7 +7,7 @@ namespace grpe\pvp\game\task;
 use grpe\pvp\Main;
 use grpe\pvp\utils\Utils;
 
-use grpe\pvp\game\mode\modes\duels\StickDuels;
+use grpe\pvp\game\mode\duels\StickDuels;
 
 use pocketmine\block\Block;
 
@@ -20,7 +20,7 @@ use pocketmine\scheduler\Task;
  * Class RemoveCachedBlocks
  * @package grpe\pvp\game\task
  *
- * @version 1.0.0
+ * @version 1.0.1
  * @since   1.0.0
  */
 class RemoveCachedBlocks extends Task {

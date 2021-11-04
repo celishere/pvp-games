@@ -7,6 +7,9 @@ namespace grpe\pvp\game\stages;
 use grpe\pvp\game\Stage;
 use grpe\pvp\game\GameSession;
 
+use grpe\pvp\utils\Utils;
+
+use pocketmine\item\Item;
 use pocketmine\utils\TextFormat;
 
 /**
@@ -15,7 +18,7 @@ use pocketmine\utils\TextFormat;
  *
  * @author celis <celishere@gmail.com> <Telegram:@celishere>
  *
- * @version 1.0.0
+ * @version 1.0.1
  * @since   1.0.0
  */
 class EndingStage extends Stage {
@@ -26,6 +29,13 @@ class EndingStage extends Stage {
      */
     public function __construct(GameSession $session) {
         $this->setTime(11);
+
+        foreach ($session->getPlayers() as $player) {
+            $player->getInventory()->clearAll();
+            $player->getArmorInventory()->clearAll();
+
+            $player->getInventory()->setItem(8, Utils::createNamedTagItem(Item::get(Item::BED, 14), 'Выход', 'quit'));
+        }
 
         parent::__construct($session);
     }

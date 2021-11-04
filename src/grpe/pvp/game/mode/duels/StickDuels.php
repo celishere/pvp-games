@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace grpe\pvp\game\mode\modes\duels;
+namespace grpe\pvp\game\mode\duels;
 
 use grpe\pvp\Main;
 
@@ -15,15 +15,21 @@ use grpe\pvp\game\task\RemoveCachedBlocks;
 
 use grpe\pvp\utils\Utils;
 
+use pocketmine\Player;
+
+use pocketmine\item\enchantment\Enchantment;
+use pocketmine\item\enchantment\EnchantmentInstance;
+use pocketmine\item\Item;
+
 use pocketmine\utils\TextFormat;
 
 /**
  * Class StickDuels
- * @package grpe\pvp\game\mode\modes\duels
+ * @package grpe\pvp\game\mode\duels
  *
  * @author celis <celishere@gmail.com> <Telegram:@celishere>
  *
- * @version 1.0.0
+ * @version 1.0.1
  * @since   1.0.0
  */
 class StickDuels extends BasicDuels {
@@ -117,6 +123,16 @@ class StickDuels extends BasicDuels {
         }
     }
 
+    /**
+     * @return array
+     */
+    public function getItems(): array {
+        $item = Item::get(Item::STICK);
+        $item->addEnchantment(new EnchantmentInstance(Enchantment::getEnchantment(Enchantment::KNOCKBACK)));
+
+        return [$item];
+    }
+
     public function resetMap(): void {
         Main::getInstance()->getScheduler()->scheduleRepeatingTask(new RemoveCachedBlocks($this), 1);
     }
@@ -125,12 +141,22 @@ class StickDuels extends BasicDuels {
         $session = $this->getSession();
 
         foreach ($session->getPlayers() as $player) {
-            $player->setGamemode(0);
-            
-            $player->setHealth(20);
-            $player->setFood(20);
-
-            $player->teleport($this->getPos($player));
+            $this->onRespawn($player);
         }
+    }
+
+    /**
+     * @param Player $player
+     */
+    public function onRespawn(Player $player): void {
+        $session = $this->getSession();
+        
+        Utils::reset($player);
+        $player->setGamemode(0);
+
+        $player->getInventory()->setContents($session->getMode()->getItems());
+        $player->getArmorInventory()->setContents($session->getMode()->getArmor()); //нет в 1.1
+
+        $player->teleport($this->getSpawn($player));
     }
 }

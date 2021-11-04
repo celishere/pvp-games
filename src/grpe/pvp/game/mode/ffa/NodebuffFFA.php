@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace grpe\pvp\game\mode\modes\ffa;
+namespace grpe\pvp\game\mode\ffa;
 
 use pocketmine\item\Item;
 
 /**
  * Class NodebuffFFA
- * @package grpe\pvp\game\mode\modes\ffa
+ * @package grpe\pvp\game\mode\ffa
  *
- * @version 1.0.0
+ * @version 1.0.1
  * @since   1.0.0
  */
 class NodebuffFFA extends ClassicFFA {

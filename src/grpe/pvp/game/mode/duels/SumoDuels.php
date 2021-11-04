@@ -2,18 +2,18 @@
 
 declare(strict_types=1);
 
-namespace grpe\pvp\game\mode\modes\duels;
+namespace grpe\pvp\game\mode\duels;
 
 use grpe\pvp\game\GameSession;
 use grpe\pvp\game\mode\BasicDuels;
 
 /**
  * Class SumoDuels
- * @package grpe\pvp\game\mode\modes\duels
+ * @package grpe\pvp\game\mode\duels
  *
  * @author celis <celishere@gmail.com> <Telegram:@celishere>
  *
- * @version 1.0.0
+ * @version 1.0.1
  * @since   1.0.0
  */
 class SumoDuels extends BasicDuels {

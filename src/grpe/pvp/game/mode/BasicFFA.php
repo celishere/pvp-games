@@ -20,7 +20,7 @@ use pocketmine\Player;
  * Class BasicFFA
  * @package grpe\pvp\game
  *
- * @version 1.0.0
+ * @version 1.0.1
  * @since   1.0.0
  */
 abstract class BasicFFA extends FFAMode {
@@ -39,18 +39,9 @@ abstract class BasicFFA extends FFAMode {
      * @return Position
      */
     public function getPos(): Position {
+        $spawns = $this->getSession()->getData()->getSpawns();
 
-        //TODO: переделать под заданные точки
-
-        $data = $this->getSession()->getData();
-
-        $pos1 = $data->getPos1()->floor();
-        $pos2 = $data->getPos2()->floor();
-
-        $x = mt_rand($pos1->getX(), $pos2->getX());
-        $z = mt_rand($pos1->getZ(), $pos2->getZ());
-
-        return new Position($x, $pos1->getY(), $z, $this->getSession()->getLevel()); //Y один и тот же?
+        return $spawns[array_rand($spawns)]->setLevel($this->getSession()->getLevel());
     }
 
     /**
@@ -95,7 +86,7 @@ abstract class BasicFFA extends FFAMode {
                 $kd = $playerData->getKillDeath();
                 $maxKs = $playerData->getMaxKillStreak();
 
-                $player->sendPopup(TextFormat::colorize("&fУбийств: &c$kills &8| &fСмертей: &e$deaths &8| &fK/S: &b$ks &8| &fK/D: &a$kd &8| &fMax K/S: &2$maxKs"));
+                $player->sendTip(TextFormat::colorize("&fУбийств: &c$kills &8| &fСмертей: &e$deaths &8| &fK/S: &b$ks &8| &fK/D: &a$kd &8| &fMax K/S: &2$maxKs"));
             }
         }
     }

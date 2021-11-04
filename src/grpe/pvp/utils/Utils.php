@@ -5,18 +5,20 @@ declare(strict_types=1);
 namespace grpe\pvp\utils;
 
 use Exception;
+use grpe\pvp\game\mode\ffa\FistFFA;
+use grpe\pvp\game\mode\ffa\GappleFFA;
 use ReflectionException;
 
 use grpe\pvp\game\GameSession;
 
 use grpe\pvp\game\mode\Mode;
 use grpe\pvp\game\mode\BasicFFA;
-use grpe\pvp\game\mode\modes\ffa\ClassicFFA;
-use grpe\pvp\game\mode\modes\ffa\NodebuffFFA;
-use grpe\pvp\game\mode\modes\ffa\ResistanceFFA;
-use grpe\pvp\game\mode\modes\duels\ClassicDuels;
-use grpe\pvp\game\mode\modes\duels\StickDuels;
-use grpe\pvp\game\mode\modes\duels\SumoDuels;
+use grpe\pvp\game\mode\ffa\ClassicFFA;
+use grpe\pvp\game\mode\ffa\NodebuffFFA;
+use grpe\pvp\game\mode\ffa\ResistanceFFA;
+use grpe\pvp\game\mode\duels\ClassicDuels;
+use grpe\pvp\game\mode\duels\StickDuels;
+use grpe\pvp\game\mode\duels\SumoDuels;
 
 use grpe\pvp\game\Stage;
 use grpe\pvp\game\stages\CountdownStage;
@@ -39,7 +41,7 @@ use pocketmine\nbt\tag\StringTag;
  *
  * @author celis <celishere@gmail.com> <Telegram:@celishere>
  *
- * @version 1.0.0
+ * @version 1.0.1
  * @since   1.0.0
  */
 class Utils {
@@ -151,6 +153,10 @@ class Utils {
                 return new NodebuffFFA($session);
             case 'resistance':
                 return new ResistanceFFA($session);
+            case 'fist':
+                return new FistFFA($session);
+            case 'gapple':
+                return new GappleFFA($session);
         }
     }
 

@@ -4,19 +4,21 @@ declare(strict_types=1);
 
 namespace grpe\pvp\listener;
 
-use grpe\pvp\game\mode\BasicDuels;
-use grpe\pvp\game\Stage;
 use grpe\pvp\Main;
 
 use grpe\pvp\game\GameSession;
 
+use grpe\pvp\game\Stage;
 use grpe\pvp\game\stages\RunningStage;
 
 use grpe\pvp\game\mode\FFAMode;
-use grpe\pvp\game\mode\modes\duels\StickDuels;
-use grpe\pvp\game\mode\modes\duels\ClassicDuels;
-use grpe\pvp\game\mode\modes\duels\SumoDuels;
-use grpe\pvp\game\mode\modes\ffa\ResistanceFFA;
+use grpe\pvp\game\mode\BasicDuels;
+
+use grpe\pvp\game\mode\duels\StickDuels;
+use grpe\pvp\game\mode\duels\ClassicDuels;
+use grpe\pvp\game\mode\duels\SumoDuels;
+
+use grpe\pvp\game\mode\ffa\ResistanceFFA;
 
 use grpe\pvp\player\PlayerData;
 
@@ -27,6 +29,7 @@ use pocketmine\block\Block;
 
 use pocketmine\event\Event;
 use pocketmine\event\player\PlayerMoveEvent;
+
 use pocketmine\tile\Bed as TileBed;
 
 use pocketmine\event\Listener;
@@ -59,11 +62,12 @@ use pocketmine\Server;
 
 /**
  * Class PvPListener
+ *
  * @package grpe\pvp\listener
  *
  * @author celis <celishere@gmail.com> <Telegram:@celishere>
  *
- * @version 1.0.0
+ * @version 1.0.1
  * @since   1.0.0
  */
 class PvPListener implements Listener {
@@ -77,9 +81,9 @@ class PvPListener implements Listener {
         Utils::reset($player);
 
         $player->teleport(Server::getInstance()->getDefaultLevel()->getSpawnLocation());
-        $player->sendMessage(TextFormat::colorize("&aДобро пожаловать!"));
+        $player->sendMessage(TextFormat::colorize('&aДобро пожаловать!'));
 
-        Server::getInstance()->dispatchCommand($event->getPlayer(), 'join classic');
+        Server::getInstance()->dispatchCommand($event->getPlayer(), 'join stick');
     }
 
     /**
@@ -215,26 +219,29 @@ class PvPListener implements Listener {
                                 }
                             }
 
-                            if ($mode instanceof ClassicDuels or $mode instanceof FFAMode) {
-                                if (($entity->getHealth() - $event->getFinalDamage()) <= 0) {
-                                    $event->setCancelled();
+                            if (($entity->getHealth() - $event->getFinalDamage()) <= 0) {
+                                if ($mode instanceof StickDuels) {
+                                    $mode->onRespawn($entity);
+                                    return;
+                                }
 
-                                    $entity->getLevel()->addParticle(new DestroyBlockParticle($entity, Block::get(Block::REDSTONE_BLOCK)));
+                                $event->setCancelled();
 
-                                    $damager->sendMessage(TextFormat::RED. 'Kill!');
+                                $entity->getLevel()->addParticle(new DestroyBlockParticle($entity, Block::get(Block::REDSTONE_BLOCK)));
 
-                                    $deathMessage = '&b'. $entity->getName() . ' &fбыл убит &e'. $damager->getName();
-                                    $entitySession->removePlayer($entity, true, $deathMessage);
+                                $damager->sendMessage(TextFormat::RED . 'Kill!');
 
-                                    $manager = Main::getPlayerDataManager();
+                                $deathMessage = '&b' . $entity->getName() . ' &fбыл убит &e' . $damager->getName();
+                                $entitySession->removePlayer($entity, true, $deathMessage);
 
-                                    if (($entitySession = $manager->getPlayerData($entity)) instanceof PlayerData) {
-                                        $entitySession->addDeath();
-                                    }
+                                $manager = Main::getPlayerDataManager();
 
-                                    if (($damagerSession = $manager->getPlayerData($damager)) instanceof PlayerData) {
-                                        $damagerSession->addKill();
-                                    }
+                                if (($entitySession = $manager->getPlayerData($entity)) instanceof PlayerData) {
+                                    $entitySession->addDeath();
+                                }
+
+                                if (($damagerSession = $manager->getPlayerData($damager)) instanceof PlayerData) {
+                                    $damagerSession->addKill();
                                 }
                             }
                         }
@@ -260,7 +267,7 @@ class PvPListener implements Listener {
                         $event->setCancelled();
                         return;
                     }
-                    
+
                     if (($entity->getHealth() - $event->getFinalDamage()) <= 0) {
                         $event->setCancelled();
 
@@ -269,7 +276,7 @@ class PvPListener implements Listener {
                         }
 
                         if ($mode instanceof StickDuels) {
-                            $entity->teleport($mode->getPos($entity));
+                            $entity->teleport($mode->getSpawn($entity));
                         } else {
                             if ($mode instanceof BasicDuels) {
                                 if ($entitySession->getStage()->getId() !== Stage::RUNNING) {
@@ -298,7 +305,7 @@ class PvPListener implements Listener {
      * @param PlayerMoveEvent $event
      */
     public function onMove(PlayerMoveEvent $event): void {
-        //$event->getPlayer()->sendPopup($event->getPlayer()->asLocation()->__toString());
+        $event->getPlayer()->sendPopup($event->getPlayer()->asLocation()->__toString());
     }
 
     /**

@@ -6,13 +6,15 @@ namespace grpe\pvp\game;
 
 use pocketmine\Player;
 
+use pocketmine\level\Location;
+
 /**
  * Class Team
  *
  * @package grpe\pvp\game
  * @author celis <celispost@icloud.com>
  *
- * @version 1.0.0
+ * @version 1.0.1
  * @since   1.0.0
  */
 class Team {
@@ -21,13 +23,17 @@ class Team {
     private array $players = [];
 
     private int $id;
-    private array $spawns = []; //todo
+
+    private array $playerSpawns = [];
+    private array $spawns;
 
     /**
-     * @param int $teamId
+     * @param int   $teamId
+     * @param array $spawns
      */
-    public function __construct(int $teamId) {
+    public function __construct(int $teamId, array $spawns) {
         $this->id = $teamId;
+        $this->spawns = $spawns;
     }
 
     /**
@@ -35,6 +41,7 @@ class Team {
      */
     public function addPlayer(Player $player): void {
         $this->players[$player->getId()] = $player;
+        $this->playerSpawns[$player->getId()] = $this->pickSpawn();
     }
 
     /**
@@ -58,6 +65,22 @@ class Team {
      */
     public function getPlayers(): array {
         return $this->players;
+    }
+
+    /**
+     * @param Player $player
+     *
+     * @return Location|null
+     */
+    public function getPlayerSpawn(Player $player): ?Location {
+        return $this->playerSpawns[$player->getId()] ?? null;
+    }
+
+    /**
+     * @return Location|null
+     */
+    public function pickSpawn(): ?Location {
+        return !empty($this->spawns) ? array_pop($this->spawns) : null;
     }
 
     /**

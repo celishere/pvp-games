@@ -12,7 +12,7 @@ use pocketmine\level\Location;
  *
  * @author celis <celishere@gmail.com> <Telegram:@celishere>
  *
- * @version 1.0.0
+ * @version 1.0.1
  * @since   1.0.0
  */
 final class GameData {
@@ -30,8 +30,9 @@ final class GameData {
     private int $maxPlayers;
 
     private Location $waitingRoom;
-    private Location $pos1;
-    private Location $pos2;
+
+    /** @var Location[] */
+    private array $spawns;
 
     /**
      * GameData constructor.
@@ -45,8 +46,7 @@ final class GameData {
      * @param int      $gameTime
      * @param int      $maxPlayers
      * @param Location $waitingRoom
-     * @param Location $pos1
-     * @param Location $pos2
+     * @param array    $spawns
      */
     public function __construct(
         string $name,
@@ -62,8 +62,8 @@ final class GameData {
         int $maxPlayers,
 
         Location $waitingRoom,
-        Location $pos1,
-        Location $pos2
+
+        array $spawns
     ) {
         $this->name = $name;
         $this->mode = $mode;
@@ -80,8 +80,7 @@ final class GameData {
 
         $this->waitingRoom = $waitingRoom;
 
-        $this->pos1 = $pos1;
-        $this->pos2 = $pos2;
+        $this->spawns = $spawns;
     }
 
     /**
@@ -148,16 +147,9 @@ final class GameData {
     }
 
     /**
-     * @return Location
+     * @return array
      */
-    public function getPos1(): Location {
-        return $this->pos1;
-    }
-
-    /**
-     * @return Location
-     */
-    public function getPos2(): Location {
-        return $this->pos2;
+    public function getSpawns(): array {
+        return $this->spawns;
     }
 }

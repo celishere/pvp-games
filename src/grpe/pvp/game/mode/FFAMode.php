@@ -18,12 +18,10 @@ use pocketmine\math\Vector3;
  *
  * @author celis <celishere@gmail.com> <Telegram:@celishere>
  *
- * @version 1.0.0
+ * @version 1.0.1
  * @since   1.0.0
  */
 abstract class FFAMode {
-
-    protected array $kills = [];
 
     /**
      * @return GameSession
@@ -39,6 +37,11 @@ abstract class FFAMode {
      * @return Item[]
      */
     abstract public function getItems(): array;
+
+    /**
+     * @return Item[]
+     */
+    abstract public function getArmor(): array;
 
     /**
      * @param int $stageId

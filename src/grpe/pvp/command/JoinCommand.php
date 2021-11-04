@@ -6,8 +6,8 @@ namespace grpe\pvp\command;
 
 use grpe\pvp\Main;
 use grpe\pvp\game\GameSession;
-
 use grpe\pvp\player\PlayerData;
+
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
 
@@ -21,7 +21,7 @@ use pocketmine\utils\TextFormat;
  *
  * @author celis <celishere@gmail.com> <Telegram:@celishere>
  *
- * @version 1.0.0
+ * @version 1.0.1
  * @since   1.0.0
  */
 class JoinCommand extends Command {
@@ -43,7 +43,7 @@ class JoinCommand extends Command {
      */
     public function execute(CommandSender $sender, string $commandLabel, array $args): bool {
         if ($sender instanceof Player) {
-            $mode = $args[0] ?? 'sumo';
+            $mode = strtolower($args[0]) ?? 'sumo';
 
             $playerSession = Main::getSessionManager()->getSession($sender);
             $gameSession = Main::getGameManager()->findGame($mode, $playerSession->getOsId());

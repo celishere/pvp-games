@@ -8,7 +8,10 @@ use grpe\pvp\game\GameSession;
 use grpe\pvp\game\Team;
 
 use pocketmine\Player;
+use pocketmine\item\Item;
+
 use pocketmine\math\Vector3;
+use pocketmine\level\Location;
 
 /**
  * Class Mode
@@ -16,7 +19,7 @@ use pocketmine\math\Vector3;
  *
  * @author celis <celishere@gmail.com> <Telegram:@celishere>
  *
- * @version 1.0.0
+ * @version 1.0.1
  * @since   1.0.0
  */
 abstract class Mode {
@@ -25,8 +28,17 @@ abstract class Mode {
     protected array $teams = [];
 
     public function initTeams(): void {
+        $spawns = $this->getSession()->getData()->getSpawns();
+
         for ($teamId = 1; $teamId <= 2; $teamId++) {
-            $this->teams[$teamId] = new Team($teamId);
+            $teamSpawns = [];
+
+            foreach ($spawns[$teamId] as $spawn) {
+                /** @var Location $spawn */
+                $teamSpawns[] = $spawn->setLevel($this->getSession()->getLevel());
+            }
+
+            $this->teams[$teamId] = new Team($teamId, $teamSpawns);
         }
     }
 
@@ -89,17 +101,13 @@ abstract class Mode {
 
     /**
      * @param Player $player
+     *
      * @return Vector3
      */
-    public function getPos(Player $player): Vector3 {
-        $data = $this->getSession()->getData();
+    public function getSpawn(Player $player): Vector3 {
         $team = $this->getPlayerTeam($player);
 
-        if ($team != null and $team->getId() === 2) {
-            return $data->getPos2();
-        }
-
-        return $data->getPos1();
+        return $team->getPlayerSpawn($player);
     }
 
     /**
@@ -137,4 +145,14 @@ abstract class Mode {
 
         return $selectedTeam;
     }
+
+    /**
+     * @return Item[]
+     */
+    abstract public function getItems(): array;
+
+    /**
+     * @return Item[]
+     */
+    abstract public function getArmor(): array;
 }

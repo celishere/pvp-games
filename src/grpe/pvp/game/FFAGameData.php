@@ -4,15 +4,13 @@ declare(strict_types=1);
 
 namespace grpe\pvp\game;
 
-use pocketmine\math\Vector3;
-
 /**
  * Class FFAGameData
  * @package grpe\pvp\game
  *
  * @author celis <celishere@gmail.com> <Telegram:@celishere>
  *
- * @version 1.0.0
+ * @version 1.0.1
  * @since   1.0.0
  */
 final class FFAGameData {
@@ -23,17 +21,16 @@ final class FFAGameData {
 
     private string $platform;
 
-    private Vector3 $pos1;
-    private Vector3 $pos2;
+    private array $spawns;
 
     /**
      * FFAGameData constructor.
+     *
      * @param string $name
      * @param string $mode
      * @param string $world
      * @param string $platform
-     * @param Vector3 $pos1
-     * @param Vector3 $pos2
+     * @param array  $spawns
      */
     public function __construct(
         string $name,
@@ -42,8 +39,7 @@ final class FFAGameData {
 
         string $platform,
 
-        Vector3 $pos1,
-        Vector3 $pos2
+        array $spawns
     ) {
         $this->name = $name;
         $this->mode = $mode;
@@ -51,8 +47,7 @@ final class FFAGameData {
 
         $this->platform = $platform;
 
-        $this->pos1 = $pos1;
-        $this->pos2 = $pos2;
+        $this->spawns = $spawns;
     }
 
     /**
@@ -84,16 +79,9 @@ final class FFAGameData {
     }
 
     /**
-     * @return Vector3
+     * @return array
      */
-    public function getPos1(): Vector3 {
-        return $this->pos1;
-    }
-
-    /**
-     * @return Vector3
-     */
-    public function getPos2(): Vector3 {
-        return $this->pos2;
+    public function getSpawns(): array {
+        return $this->spawns;
     }
 }

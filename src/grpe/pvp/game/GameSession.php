@@ -15,16 +15,14 @@ use grpe\pvp\game\stages\RunningStage;
 use grpe\pvp\player\PlayerData;
 
 use grpe\pvp\event\PvPJoinEvent;
-use grpe\pvp\event\PvPQuitEvent;
 
 use grpe\pvp\utils\Utils;
 
-use pocketmine\item\Item;
 use pocketmine\Player;
 use pocketmine\Server;
 
+use pocketmine\item\Item;
 use pocketmine\level\Level;
-use pocketmine\level\Location;
 
 use pocketmine\utils\TextFormat;
 
@@ -34,7 +32,7 @@ use pocketmine\utils\TextFormat;
  *
  * @author celis <celishere@gmail.com> <Telegram:@celishere>
  *
- * @version 1.0.0
+ * @version 1.0.1
  * @since   1.0.0
  */
 final class GameSession {
@@ -133,7 +131,7 @@ final class GameSession {
                 $arenaPlayer->sendMessage(TextFormat::colorize('&b' . $player->getName() . ' &fприсоединился. Игроков: &a'. $now));
             }
         } else {
-            $player->teleport($this->getData()->getWaitingRoom());
+            $player->teleport($this->getData()->getWaitingRoom()->setLevel($this->getLevel()));
 
             $player->getInventory()->setItem(8, Utils::createNamedTagItem(Item::get(Item::BED, 14), 'Выход', 'quit'));
 
@@ -259,15 +257,17 @@ final class GameSession {
             $this->removePlayer($player);
         }
 
-        $this->players = [];
+        $data = $this->getData();
+        $world = $data->getWorld();
 
+        $this->getLevel()->unload(true);
+        Server::getInstance()->loadLevel($world);
+
+        $level = Server::getInstance()->getLevelByName($world);
+        $level->setAutoSave(false);
+        
         $this->setStage(Stage::WAITING);
-
-        if ($this->getLevel()->unload()) {
-            if (!Server::getInstance()->loadLevel($this->getData()->getWorld())) {
-                Main::getGameManager()->killGame($this->getData());
-            }
-        }
+        $this->getMode()->initTeams();
     }
 
     public function tick(): void {

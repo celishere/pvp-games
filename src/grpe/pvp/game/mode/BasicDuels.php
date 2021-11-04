@@ -11,7 +11,7 @@ use grpe\pvp\game\Stage;
  * Class BasicDuels
  * @package grpe\pvp\game
  *
- * @version 1.0.0
+ * @version 1.0.1
  * @since   1.0.0
  */
 abstract class BasicDuels extends Mode {
@@ -33,6 +33,20 @@ abstract class BasicDuels extends Mode {
      */
     public function getSession(): GameSession {
         return $this->session;
+    }
+
+    /**
+     * @return array
+     */
+    public function getItems(): array {
+        return [];
+    }
+
+    /**
+     * @return array
+     */
+    public function getArmor(): array {
+        return [];
     }
 
     /**

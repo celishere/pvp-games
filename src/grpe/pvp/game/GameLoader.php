@@ -8,15 +8,13 @@ use grpe\pvp\utils\Utils;
 use pocketmine\Server;
 use pocketmine\utils\Config;
 
-use InvalidArgumentException;
-
 /**
  * Class GameLoader
  * @package grpe\pvp\game
  *
  * @author celis <celishere@gmail.com> <Telegram:@celishere>
  *
- * @version 1.0.0
+ * @version 1.0.1
  * @since   1.0.0
  */
 final class GameLoader {
@@ -31,6 +29,9 @@ final class GameLoader {
 
             if ($config->check()) {
                 $arenaData = $config->getAll();
+
+                $teamSpawns = [];
+                $positions  = [];
 
                 $name = $arenaData["name"] ?? null;
                 if($name === null) {
@@ -64,7 +65,9 @@ final class GameLoader {
                 $level = Server::getInstance()->getLevelByName($world);
                 $level->setAutoSave(false);
 
-                if ($mode !== "ffa") {
+                $isFFA = $arenaData['isFFA'] ?? false;
+
+                if (!$isFFA) {
                     $team = $arenaData["isTeam"] ?? null;
                     if ($team === null) {
                         $logger->warning("Тип арены не указан. Имя арены - $name");
@@ -101,38 +104,55 @@ final class GameLoader {
                         $logger->warning("Была указана некорректная локация. Имя арены - $name.");
                         continue;
                     }
-                }
 
-                $pos1Raw = $arenaData["pos1"] ?? null;
-                if($pos1Raw === null) {
-                    $logger->warning("Точка #1 не указана. Имя арены - $name.");
-                    continue;
-                }
+                    $spawns = $arenaData["spawns"] ?? null;
+                    if ($spawns != null and !empty($spawns)) {
+                        $teamSpawns = [];
 
-                try {
-                    $pos1 = Utils::unpackLocation($pos1Raw, $level);
-                } catch (\Exception $e) {
-                    $logger->warning("Была указана некорректная локация. Имя арены - $name.");
-                    continue;
-                }
+                        foreach ($spawns as $teamId => $spawn) {
+                            foreach ($spawn as $spawnId => $pos) {
+                                try {
+                                    $teamSpawns[$teamId][$spawnId] = Utils::unpackLocation($pos, $level);
+                                } catch (\Exception $e) {
+                                    $logger->warning("Была указана некорректная локация. Имя арены - $name.");
+                                    continue;
+                                }
+                            }
+                        }
+                    } else {
+                        $logger->warning("Нет точек спавна для команд. Имя арены - $name.");
+                        continue;
+                    }
 
-                $pos2Raw = $arenaData["pos2"] ?? null;
-                if($pos2Raw === null) {
-                    $logger->warning("Точка #2 не указана. Имя арены - $name.");
-                    continue;
-                }
-
-                try {
-                    $pos2 = Utils::unpackLocation($pos2Raw, $level);
-                } catch (\Exception $e) {
-                    $logger->warning("Была указана некорректная локация. Имя арены - $name.");
-                    continue;
-                }
-
-                if ($mode === "ffa") {
-                    $gameData = new FFAGameData($name, $mode, $world, $platform, $pos1, $pos2);
+                    if (empty($teamSpawns)) {
+                        $logger->warning("Некорректные точки спавна для команд. Имя арены - $name.");
+                        continue;
+                    }
                 } else {
-                    $gameData = new GameData($name, $mode, $world, $team, $platform, $countdown, $gameTime, $maxPlayers, $waitingRoom, $pos1, $pos2);
+                    $spawns = $arenaData['spawns'] ?? null;
+                    if ($spawns != null and !empty($spawns)) {
+                        $positions = [];
+
+                        foreach ($spawns as $spawnId => $pos) {
+                            try {
+                                $positions[$spawnId] = Utils::unpackLocation($pos, $level);
+                            } catch (\Exception $e) {
+                                $logger->warning("Была указана некорректная локация. Имя арены - $name.");
+                                continue;
+                            }
+                        }
+                    }
+
+                    if (empty($positions)) {
+                        $logger->warning("Некорректные точки спавна. Имя арены - $name.");
+                        continue;
+                    }
+                }
+
+                if ($isFFA) {
+                    $gameData = new FFAGameData($name, $mode, $world, $platform, $positions);
+                } else {
+                    $gameData = new GameData($name, $mode, $world, $team, $platform, $countdown, $gameTime, $maxPlayers, $waitingRoom, $teamSpawns);
                 }
 
                 $manager->addGame($gameData);
