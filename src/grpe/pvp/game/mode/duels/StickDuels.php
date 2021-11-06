@@ -29,7 +29,7 @@ use pocketmine\utils\TextFormat;
  *
  * @author celis <celishere@gmail.com> <Telegram:@celishere>
  *
- * @version 1.0.1
+ * @version 1.0.2
  * @since   1.0.0
  */
 class StickDuels extends BasicDuels {
@@ -110,12 +110,21 @@ class StickDuels extends BasicDuels {
                         return $player->getName();
                     }, $team->getPlayers()));
             }
-
+            
             foreach ($this->getSession()->getPlayers() as $players) {
                 $players->sendTitle(TextFormat::RED . 'Игра окончена.');
 
                 if ($message != null) {
                     $players->sendMessage(TextFormat::colorize($message));
+                }
+            }
+
+            foreach ($this->getTeams() as $team) {
+                foreach ($team->getPlayers() as $player) {
+                    $playerSession = Main::getSessionManager()->getSession($player);
+                    $playerSession->addWins(1);
+
+                    $player->sendTitle(TextFormat::GREEN . 'Победа!');
                 }
             }
 

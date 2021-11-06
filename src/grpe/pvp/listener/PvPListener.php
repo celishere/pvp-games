@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace grpe\pvp\listener;
 
+use grpe\pvp\game\mode\Mode;
 use grpe\pvp\Main;
 
 use grpe\pvp\game\GameSession;
@@ -22,6 +23,7 @@ use grpe\pvp\game\mode\ffa\ResistanceFFA;
 
 use grpe\pvp\player\PlayerData;
 
+use grpe\pvp\utils\TeamData;
 use grpe\pvp\utils\Utils;
 
 use pocketmine\block\Bed;
@@ -67,7 +69,7 @@ use pocketmine\Server;
  *
  * @author celis <celishere@gmail.com> <Telegram:@celishere>
  *
- * @version 1.0.1
+ * @version 1.0.2
  * @since   1.0.0
  */
 class PvPListener implements Listener {
@@ -79,6 +81,8 @@ class PvPListener implements Listener {
         $player = $event->getPlayer();
 
         Utils::reset($player);
+
+        $player->setNameTag(TextFormat::YELLOW . $player->getName()); //todo
 
         $player->teleport(Server::getInstance()->getDefaultLevel()->getSpawnLocation());
         $player->sendMessage(TextFormat::colorize('&aДобро пожаловать!'));
@@ -157,7 +161,7 @@ class PvPListener implements Listener {
                     if ($team != null) {
                         if ($team->getId() === $bedColorId) {
                             foreach ($gameSession->getPlayers() as $sessionPlayers) {
-                                $sessionPlayers->sendMessage(TextFormat::colorize('&a' . $player->getName() . ' &fсломал кровать вражеской команды.'));
+                                $sessionPlayers->sendMessage(TextFormat::colorize(TeamData::COLORS[$team->getId()] . $player->getName() . ' &fсломал кровать вражеской команды.'));
                             }
 
                             $mode->addScore($team->getId());
@@ -193,6 +197,11 @@ class PvPListener implements Listener {
             $entitySession = Main::getGameManager()->getPlayerSession($entity);
 
             if ($entitySession instanceof GameSession) {
+                if ($entitySession->getStage()->getId() !== Stage::RUNNING) {
+                    $event->setCancelled();
+                    return;
+                }
+
                 $mode = $entitySession->getMode();
 
                 if ($event instanceof EntityDamageByEntityEvent) {
@@ -202,6 +211,11 @@ class PvPListener implements Listener {
                         $damagerSession = Main::getGameManager()->getPlayerSession($damager);
 
                         if ($damagerSession instanceof GameSession) {
+                            if ($damagerSession->isSpectator($damager)) {
+                                $event->setCancelled();
+                                return;
+                            }
+
                             if ($mode instanceof SumoDuels or $mode instanceof ResistanceFFA) {
                                 $entity->setHealth($entity->getMaxHealth());
                                 return;
@@ -220,19 +234,26 @@ class PvPListener implements Listener {
                             }
 
                             if (($entity->getHealth() - $event->getFinalDamage()) <= 0) {
-                                if ($mode instanceof StickDuels) {
-                                    $mode->onRespawn($entity);
-                                    return;
-                                }
-
                                 $event->setCancelled();
 
                                 $entity->getLevel()->addParticle(new DestroyBlockParticle($entity, Block::get(Block::REDSTONE_BLOCK)));
 
                                 $damager->sendMessage(TextFormat::RED . 'Kill!');
 
-                                $deathMessage = '&b' . $entity->getName() . ' &fбыл убит &e' . $damager->getName();
-                                $entitySession->removePlayer($entity, true, $deathMessage);
+                                $eT = $mode instanceof Mode ? TeamData::COLORS[$mode->getPlayerTeam($entity)->getId()] : "&b";
+                                $dT = $mode instanceof Mode ? TeamData::COLORS[$mode->getPlayerTeam($damager)->getId()] : "&e";
+
+                                $deathMessage = $eT . $entity->getName() . '&f был убит ' . $dT . $damager->getName();
+
+                                if ($mode instanceof StickDuels) {
+                                    foreach ($entitySession->getPlayers() as $players) {
+                                        $players->sendMessage(TextFormat::colorize($deathMessage));
+                                    }
+
+                                    $mode->onRespawn($entity);
+                                } else {
+                                    $entitySession->removePlayer($entity, true, $deathMessage);
+                                }
 
                                 $manager = Main::getPlayerDataManager();
 
@@ -278,12 +299,6 @@ class PvPListener implements Listener {
                         if ($mode instanceof StickDuels) {
                             $entity->teleport($mode->getSpawn($entity));
                         } else {
-                            if ($mode instanceof BasicDuels) {
-                                if ($entitySession->getStage()->getId() !== Stage::RUNNING) {
-                                    return;
-                                }
-                            }
-
                             $entitySession->removePlayer($entity, true);
                         }
                     }

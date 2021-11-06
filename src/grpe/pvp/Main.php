@@ -33,7 +33,7 @@ use pocketmine\plugin\PluginBase;
  *
  * @author celis <celishere@gmail.com> <Telegram:@celishere>
  *
- * @version 1.0.0
+ * @version 1.0.2
  * @since   1.0.0
  */
 class Main extends PluginBase {
@@ -59,8 +59,8 @@ class Main extends PluginBase {
 
         $commandMap = $this->getServer()->getCommandMap();
         $commandMap->register('join', new JoinCommand('join', 'присоединиться к игре.'));
-        $commandMap->register('quit', new QuitCommand('quit'));
-        $commandMap->register('stats', new StatsCommand('quit'));
+        $commandMap->register('quit', new QuitCommand('quit', 'выйти из игры.'));
+        $commandMap->register('stats', new StatsCommand('stats', 'твоя статистика.'));
     }
 
     public function onEnable(): void {

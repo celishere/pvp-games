@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace grpe\pvp\player\sessions;
 
 use grpe\pvp\Main;
-use grpe\pvp\db\Request;
+use grpe\pvp\db\models\Model;
 
 use pocketmine\Player;
 
@@ -13,19 +13,17 @@ use pocketmine\Player;
  * Class Session
  * @package grpe\pvp\player\sessions
  *
- * @version 1.0.0
+ * @version 1.0.2
  * @since   1.0.0
  */
 class Session {
 
     private string $username;
+    private bool $isDirty = false;
 
-    private int $osId = 0; //unknown
+    private int $osId = 0;
 
-    private int $games = 0;
-    private int $wins = 0;
-    private int $kills = 0;
-    private int $deaths = 0;
+    private Model $model;
 
     /**
      * Session constructor.
@@ -34,27 +32,29 @@ class Session {
     public function __construct(Player $player) {
         $this->username = $player->getLowerCaseName();
 
-        $db = Main::getDataBaseManager()->getDatabase();
+        $db = Main::getDataBaseManager()->getConnection()->getDB();
 
-        $prepare = $db->prepare("SELECT * FROM `pvp` WHERE username = :username");
+        $prepare = $db->prepare('SELECT * FROM `pvp` WHERE username = :username');
         $prepare->bindValue('username', $this->username);
 
         $res = $prepare->execute()->fetchArray(SQLITE3_ASSOC);
 
-        if (is_bool($res)) {
-            $prep = $db->prepare("INSERT INTO `pvp` (username) VALUES (:username)");
-            $prep->bindValue("username", $this->username);
-            $prep->execute();
+        $model = new Model();
+        $model->username = $this->username;
+
+        if (is_array($res)) {
+            $model->id = $res['id'];
+
+            unset($res['id'], $res['username']);
+
+            foreach ($res as $name => $data) {
+                $model->{$name} = $data;
+            }
+
+            $model->created = true;
         }
 
-
-        //todo переделать это
-
-        foreach (['games', 'wins', 'kills', 'deaths'] as $item) {
-            $request = new Request($this->getUsername(), $item);
-
-            $this->{$item} = $request->get();
-        }
+        $this->model = $model;
     }
 
     /**
@@ -82,64 +82,73 @@ class Session {
      * @param int $value
      */
     public function addGames(int $value): void {
-        $this->games += $value;
+        $old = $this->model->games;
+        
+        $this->model->games = ($old != null ? $value + $old : $value);
+        $this->isDirty = true;
     }
 
     /**
      * @return int
      */
     public function getGames(): int {
-        return $this->games;
+        return $this->model->games ?? 0;
     }
 
     /**
      * @param int $value
      */
     public function addWins(int $value): void {
-        $this->wins += $value;
+        $old = $this->model->wins;
+
+        $this->model->wins = ($old != null ? $value + $old : $value);
+        $this->isDirty = true;
     }
 
     /**
      * @return int
      */
     public function getWins(): int {
-        return $this->wins;
+        return $this->model->wins ?? 0;
     }
 
     /**
      * @param int $value
      */
     public function addKills(int $value): void {
-        $this->kills += $value;
+        $old = $this->model->kills;
+
+        $this->model->kills = ($old != null ? $value + $old : $value);
+        $this->isDirty = true;
     }
 
     /**
      * @return int
      */
     public function getKills(): int {
-        return $this->kills;
+        return $this->model->kills ?? 0;
     }
 
     /**
      * @param int $value
      */
     public function addDeath(int $value): void {
-        $this->deaths += $value;
+        $old = $this->model->deaths;
+
+        $this->model->deaths = ($old != null ? $value + $old : $value);
+        $this->isDirty = true;
     }
 
     /**
      * @return int
      */
     public function getDeath(): int {
-        return $this->deaths;
+        return $this->model->deaths ?? 0;
     }
 
     public function onSave(): void {
-        //todo переделать это
-/*
-        foreach ([['games' => $this->games], ['wins', $this->wins], ['kills', $this->kills], ['deaths', $this->deaths]] as $item) {
-            $request = new Request($this->getUsername(), $item[0]);
-            $request->set($item[1]);
-        }*/
+        if ($this->isDirty) {
+            $this->model->save();
+        }
     }
 }

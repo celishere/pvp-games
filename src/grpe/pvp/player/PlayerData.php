@@ -15,7 +15,7 @@ use pocketmine\Player;
  *
  * @author celis <celishere@gmail.com> <Telegram:@celishere>
  *
- * @version 1.0.0
+ * @version 1.0.2
  * @since   1.0.0
  */
 class PlayerData {
@@ -113,6 +113,5 @@ class PlayerData {
 
         $session->addKills($this->kills);
         $session->addDeath($this->deaths);
-        $session->addGames(1);
     }
 }

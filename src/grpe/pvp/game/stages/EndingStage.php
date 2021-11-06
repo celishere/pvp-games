@@ -18,7 +18,7 @@ use pocketmine\utils\TextFormat;
  *
  * @author celis <celishere@gmail.com> <Telegram:@celishere>
  *
- * @version 1.0.1
+ * @version 1.0.2
  * @since   1.0.0
  */
 class EndingStage extends Stage {
@@ -53,7 +53,7 @@ class EndingStage extends Stage {
         $this->setTime($this->getTime() - 1);
 
         if ($this->getTime() > 0) {
-            foreach ($session->getPlayers() as $player) {
+            foreach ($session->getAllPlayers() as $player) {
                 $player->sendPopup(TextFormat::colorize("&aИгра перезапуститься через &e". $this->getTime() ." &aс."));
             }
         } else {

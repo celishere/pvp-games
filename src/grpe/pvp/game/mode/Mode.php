@@ -19,7 +19,7 @@ use pocketmine\level\Location;
  *
  * @author celis <celishere@gmail.com> <Telegram:@celishere>
  *
- * @version 1.0.1
+ * @version 1.0.2
  * @since   1.0.0
  */
 abstract class Mode {
@@ -80,23 +80,18 @@ abstract class Mode {
 
     /**
      * @param Player $player
-     * @return Player[]
+     *
+     * @return Team|null
      */
-    public function getOpponent(Player $player): array {
+    public function getOpponentTeam(Player $player): ?Team {
         $team = $this->getPlayerTeam($player);
 
         if ($team != null) {
             $opponentId = $team->getId() === 2 ? 1 : 2;
-            $opponentTeam = $this->getTeam($opponentId);
-
-            if ($opponentTeam != null) {
-                return array_map(function ($player): string {
-                    return $player->getName();
-                }, $opponentTeam->getPlayers());
-            }
+            return $this->getTeam($opponentId);
         }
 
-        return [];
+        return null;
     }
 
     /**

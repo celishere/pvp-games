@@ -9,6 +9,7 @@ use grpe\pvp\Main;
 use grpe\pvp\game\mode\Mode;
 use grpe\pvp\game\mode\FFAMode;
 use grpe\pvp\game\mode\BasicDuels;
+use grpe\pvp\game\mode\duels\StickDuels;
 
 use grpe\pvp\game\stages\RunningStage;
 
@@ -16,6 +17,7 @@ use grpe\pvp\player\PlayerData;
 
 use grpe\pvp\event\PvPJoinEvent;
 
+use grpe\pvp\utils\TeamData;
 use grpe\pvp\utils\Utils;
 
 use pocketmine\Player;
@@ -32,13 +34,16 @@ use pocketmine\utils\TextFormat;
  *
  * @author celis <celishere@gmail.com> <Telegram:@celishere>
  *
- * @version 1.0.1
+ * @version 1.0.2
  * @since   1.0.0
  */
 final class GameSession {
 
     /** @var Player[] */
     protected array $players = [];
+
+    /** @var Player[] */
+    protected array $spectators = [];
 
     protected $data;
     protected Stage $stage;
@@ -109,7 +114,11 @@ final class GameSession {
     public function addPlayer(Player $player): void {
         $this->players[$player->getLowerCaseName()] = $player;
 
-        $player->sendMessage(TextFormat::colorize("&aПрисоединяемся к арене &e". $this->getData()->getName() ."&a..."));
+        foreach ($this->getAllPlayers() as $p2) {
+            $p2->showPlayer($player);
+        }
+
+        $player->sendMessage(TextFormat::colorize("&aПрисоединяемся к арене &e" . $this->getData()->getName() . "&a..."));
 
         $manager = Main::getPlayerDataManager();
         $data = $manager->getPlayerData($player);
@@ -164,6 +173,11 @@ final class GameSession {
             Utils::reset($player);
 
             if ($player->isOnline()) {
+                foreach($this->getAllPlayers() as $p2) {
+                    $p2->showPlayer($player);
+                }
+
+                $player->setNameTag(TextFormat::YELLOW . $player->getName()); //todo
                 $player->teleport(Server::getInstance()->getDefaultLevel()->getSpawnLocation());
             }
 
@@ -187,7 +201,9 @@ final class GameSession {
                 if ($deathMessage !== null) {
                     $players->sendMessage(TextFormat::colorize($deathMessage));
                 } else {
-                    $players->sendMessage(TextFormat::colorize('&b' . $player->getName() . ' &fубит.'));
+                    $team = $mode->getPlayerTeam($player);
+
+                    $players->sendMessage(TextFormat::colorize(TeamData::COLORS[$team->getId()] . $player->getName() . ' &fубит.'));
                 }
             }
 
@@ -195,9 +211,9 @@ final class GameSession {
                 $mode->respawnPlayer($player);
                 return;
             } else {
-                unset($this->players[$player->getLowerCaseName()]);
-
-                $player->setGamemode(3);
+                if (!$mode instanceof StickDuels) {
+                    $this->addSpectator($player);
+                }
             }
         }
 
@@ -219,17 +235,24 @@ final class GameSession {
                             $message = null;
 
                             foreach ($mode->getTeams() as $team) {
-                                $message = '&f' . (count($team->getPlayers()) > 1 ? 'Победители' : 'Победитель') . ': &7' . implode('&8, &7', array_map(function ($player): string {
+                                $message = '&f' . (count($team->getPlayers()) > 1 ? 'Победители' : 'Победитель') . ': '. TeamData::COLORS[$team->getId()] . implode('&8, '. TeamData::COLORS[$team->getId()], array_map(function ($player): string {
                                         return $player->getName();
                                     }, $team->getPlayers()));
                             }
 
-                            foreach ($this->getPlayers() as $players) {
+                            foreach ($this->getAllPlayers() as $players) {
                                 $players->sendTitle(TextFormat::RED . 'Игра окончена.');
 
                                 if ($message != null) {
                                     $players->sendMessage(TextFormat::colorize($message));
                                 }
+                            }
+
+                            foreach ($team->getPlayers() as $player) {
+                                $playerSession = Main::getSessionManager()->getSession($player);
+                                $playerSession->addWins(1);
+
+                                $player->sendTitle(TextFormat::GREEN . "Победа!");
                             }
                         }
                     }
@@ -252,8 +275,44 @@ final class GameSession {
         return count($this->players);
     }
 
+    /**
+     * @param Player $player
+     */
+    public function addSpectator(Player $player): void {
+        unset($this->players[$player->getLowerCaseName()]);
+
+        $this->spectators[$player->getLowerCaseName()] = $player;
+
+        foreach ($this->getAllPlayers() as $p2) {
+            $p2->hidePlayer($player);
+        }
+        
+        Utils::reset($player);
+        
+        $player->getInventory()->setHeldItemIndex(4);
+        $player->getInventory()->setItem(8, Utils::createNamedTagItem(Item::get(Item::BED, 14), 'Выход', 'quit'));
+
+        $player->setGamemode(Player::SPECTATOR);
+        $player->teleport($this->getData()->getWaitingRoom()->setLevel($this->getLevel()));
+    }
+
+    /**
+     * @param Player $player
+     * @return bool
+     */
+    public function isSpectator(Player $player): bool {
+        return in_array($player, $this->spectators, true);
+    }
+
+    /**
+     * @return Player[]
+     */
+    public function getAllPlayers(): array {
+        return array_merge($this->players, $this->spectators);
+    }
+
     public function reset(): void {
-        foreach ($this->getPlayers() as $player) {
+        foreach ($this->getAllPlayers() as $player) {
             $this->removePlayer($player);
         }
 
