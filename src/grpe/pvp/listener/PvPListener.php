@@ -197,7 +197,7 @@ class PvPListener implements Listener {
             $entitySession = Main::getGameManager()->getPlayerSession($entity);
 
             if ($entitySession instanceof GameSession) {
-                if ($entitySession->getStage()->getId() !== Stage::RUNNING) {
+                if ($entitySession->getMode() instanceof Mode and $entitySession->getStage()->getId() !== Stage::RUNNING) {
                     $event->setCancelled();
                     return;
                 }

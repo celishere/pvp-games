@@ -43,7 +43,7 @@ class JoinCommand extends Command {
      */
     public function execute(CommandSender $sender, string $commandLabel, array $args): bool {
         if ($sender instanceof Player) {
-            $mode = strtolower($args[0]) ?? 'sumo';
+            $mode = isset($args[0]) ? strtolower($args[0]) : 'sumo';
 
             $playerSession = Main::getSessionManager()->getSession($sender);
             $gameSession = Main::getGameManager()->findGame($mode, $playerSession->getOsId());
