@@ -48,6 +48,9 @@ class JoinCommand extends Command {
             $playerSession = Main::getSessionManager()->getSession($sender);
             $gameSession = Main::getGameManager()->findGame($mode, $playerSession->getOsId());
 
+            $playerSession->addGames(1);
+            $playerSession->addDeath(19);
+            
             if ($gameSession instanceof GameSession) {
                 $playerData = Main::getPlayerDataManager()->getPlayerData($sender);
 

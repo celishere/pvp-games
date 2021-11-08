@@ -66,8 +66,6 @@ class SQLite3Provider {
             $stmt->bindValue($column, $var, $this->getVarType($var));
         }
 
-        var_dump($stmt->getSQL(true));
-
         return $stmt->execute() !== false;
     }
 
@@ -84,8 +82,6 @@ class SQLite3Provider {
         $realValues = [];
 
         $types = '';
-
-        var_dump($data);
 
         foreach ($data as $key => $value) {
             $columns[] = $key;
@@ -105,8 +101,6 @@ class SQLite3Provider {
         }
 
         $ok = $stmt->execute();
-
-        var_dump($stmt->getSQL(true));
 
         if (!$ok) {
             return -1;
