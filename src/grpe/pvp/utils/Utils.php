@@ -5,14 +5,14 @@ declare(strict_types=1);
 namespace grpe\pvp\utils;
 
 use Exception;
-use grpe\pvp\game\mode\ffa\FistFFA;
-use grpe\pvp\game\mode\ffa\GappleFFA;
 use ReflectionException;
 
 use grpe\pvp\game\GameSession;
 
 use grpe\pvp\game\mode\Mode;
 use grpe\pvp\game\mode\BasicFFA;
+use grpe\pvp\game\mode\ffa\FistFFA;
+use grpe\pvp\game\mode\ffa\GappleFFA;
 use grpe\pvp\game\mode\ffa\ClassicFFA;
 use grpe\pvp\game\mode\ffa\NodebuffFFA;
 use grpe\pvp\game\mode\ffa\ResistanceFFA;

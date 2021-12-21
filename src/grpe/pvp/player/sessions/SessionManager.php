@@ -16,7 +16,7 @@ use pocketmine\Player;
 final class SessionManager {
 
     /** @var Session[] */
-    private array $sessions = [];
+    private $sessions = [];
 
     /**
      * @param Player $player

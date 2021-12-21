@@ -16,7 +16,7 @@ namespace grpe\pvp\utils;
 class DeviceFilter {
 
     /** @var string[] */
-    private static array $osList = [
+    private static $osList = [
         'Unknown',
         'Android',
         'iOS',
@@ -34,7 +34,7 @@ class DeviceFilter {
     ];
 
     /** @var int[][]  */
-    private static array $filterList = [
+    private static $filterList = [
         'pc' => [3, 7, 8, 10],
         'mobile' => [1, 2],
         'console' => [11, 12, 13]

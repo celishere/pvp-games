@@ -17,7 +17,8 @@ use grpe\pvp\db\provider\SQLite3Provider;
  */
 class DBManager {
 
-    private SQLite3Provider $connection;
+    /** @var SQLite3Provider */
+    private $connection;
 
     /**
      * @param string $path

@@ -23,24 +23,26 @@ use grpe\pvp\Main;
  */
 class Model {
 
-    protected static string $table = 'pvp';
+    /** @var string */
+    protected static $table = 'pvp';
 
     /**
      * @var string[]
      */
-    protected array $fillable = [
+    protected $fillable = [
         'username', 'games', 'wins', 'kills', 'deaths'
     ];
 
-    protected array $data = [];
+    protected $data = [];
 
-    protected array $dirtyData = [];
+    protected $dirtyData = [];
 
-    protected bool $dirty = false;
+    protected $dirty = false;
 
-    public bool $created = false;
+    public $created = false;
 
-    public int $id;
+    /** @var int */
+    public $id;
 
     /**
      * @return string

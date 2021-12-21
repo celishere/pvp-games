@@ -6,6 +6,8 @@ namespace grpe\pvp\db\provider;
 
 use grpe\pvp\db\models\Model;
 
+use SQLite3;
+
 /**
  * Class SQLite3Provider
  *
@@ -17,19 +19,20 @@ use grpe\pvp\db\models\Model;
  */
 class SQLite3Provider {
 
-    private \SQLite3 $connection;
+    /** @var SQLite3 */
+    private $connection;
 
     /**
      * @param string $filename
      */
     public function __construct(string $filename) {
-        $this->connection = new \SQLite3($filename);
+        $this->connection = new SQLite3($filename);
     }
 
     /**
-     * @return \SQLite3
+     * @return SQLite3
      */
-    public function getDB(): \SQLite3 {
+    public function getDB(): SQLite3 {
         return $this->connection;
     }
 

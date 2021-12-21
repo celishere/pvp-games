@@ -20,7 +20,8 @@ use pocketmine\event\Event;
  */
 class PvPJoinEvent extends Event {
 
-    private Player $player;
+    /** @var Player */
+    private $player;
 
     /** @var FFAMode|Mode */
     private $mode;

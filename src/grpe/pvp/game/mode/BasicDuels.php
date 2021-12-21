@@ -16,7 +16,8 @@ use grpe\pvp\game\Stage;
  */
 abstract class BasicDuels extends Mode {
 
-    private GameSession $session;
+    /** @var GameSession */
+    private $session;
 
     /**
      * BasicDuels constructor.

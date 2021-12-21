@@ -20,12 +20,13 @@ use pocketmine\level\Location;
 class Team {
 
     /** @var Player[] */
-    private array $players = [];
+    private $players = [];
 
-    private int $id;
+    /** @var int */
+    private $id;
 
-    private array $playerSpawns = [];
-    private array $spawns;
+    /** @var array */
+    private $playerSpawns = [], $spawns;
 
     /**
      * @param int   $teamId

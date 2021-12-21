@@ -34,9 +34,9 @@ use pocketmine\utils\TextFormat;
  */
 class StickDuels extends BasicDuels {
 
-    private array $scores = [1 => 0, 2 => 0];
+    private $scores = [1 => 0, 2 => 0];
 
-    private array $cachedBlocks = [];
+    private $cachedBlocks = [];
 
     /**
      * StickDuels constructor.

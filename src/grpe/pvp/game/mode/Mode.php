@@ -25,7 +25,7 @@ use pocketmine\level\Location;
 abstract class Mode {
 
     /** @var Team[] */
-    protected array $teams = [];
+    protected $teams = [];
 
     public function initTeams(): void {
         $spawns = $this->getSession()->getData()->getSpawns();

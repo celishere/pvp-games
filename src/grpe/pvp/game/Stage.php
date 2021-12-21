@@ -20,9 +20,11 @@ abstract class Stage {
     public const RUNNING = 3;
     public const ENDING = 4;
 
-    private GameSession $session;
+    /** @var GameSession */
+    private $session;
 
-    private int $time;
+    /** @var int */
+    private $time;
 
     /**
      * Stage constructor.

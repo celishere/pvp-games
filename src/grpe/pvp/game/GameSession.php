@@ -40,13 +40,15 @@ use pocketmine\utils\TextFormat;
 final class GameSession {
 
     /** @var Player[] */
-    protected array $players = [];
+    protected $players = [];
 
     /** @var Player[] */
-    protected array $spectators = [];
+    protected $spectators = [];
 
+    /** @var FFAGameData|GameData */
     protected $data;
-    protected Stage $stage;
+    /** @var Stage */
+    protected $stage;
 
     /** @var FFAMode|Mode */
     protected $mode;

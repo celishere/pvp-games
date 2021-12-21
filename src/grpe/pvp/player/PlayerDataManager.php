@@ -18,7 +18,7 @@ use pocketmine\Player;
 class PlayerDataManager {
 
     /** @var PlayerData[] */
-    private array $playersData = [];
+    private $playersData = [];
 
     /**
      * @param Player $player

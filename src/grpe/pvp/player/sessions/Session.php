@@ -18,12 +18,14 @@ use pocketmine\Player;
  */
 class Session {
 
-    private string $username;
-    private bool $isDirty = false;
-
-    private int $osId = 0;
-
-    private Model $model;
+    /** @var string */
+    private $username;
+    /** @var bool */
+    private $isDirty = false;
+    /** @var int */
+    private $osId = 0;
+    /** @var Model */
+    private $model;
 
     /**
      * Session constructor.

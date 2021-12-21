@@ -19,7 +19,8 @@ use pocketmine\scheduler\Task;
  */
 class GameSessionsTask extends Task {
 
-    private GameManager $manager;
+    /** @var GameManager */
+    private $manager;
 
     /**
      * GameSessionsTask constructor.

@@ -25,7 +25,8 @@ use pocketmine\Player;
  */
 abstract class BasicFFA extends FFAMode {
 
-    private GameSession $session;
+    /** @var GameSession */
+    private $session;
 
     /**
      * BasicFFA constructor.

@@ -25,15 +25,21 @@ use pocketmine\scheduler\Task;
  */
 class RemoveCachedBlocks extends Task {
 
-    private StickDuels $mode;
+    /** @var StickDuels */
+    private $mode;
 
-    private float $startTime;
-    private Level $level;
+    /** @var float */
+    private $startTime;
+    /** @var Level */
+    private $level;
 
-    private int $i = 0;
-    private int $totalCount = 0;
+    /** @var int */
+    private $i = 0;
+    /** @var int */
+    private $totalCount = 0;
 
-    private array $parts = [];
+    /** @var array */
+    private $parts = [];
 
     public const MAX_BLOCK_SPLIT = 350;
 

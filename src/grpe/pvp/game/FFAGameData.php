@@ -15,13 +15,11 @@ namespace grpe\pvp\game;
  */
 final class FFAGameData {
 
-    private string $name;
-    private string $mode;
-    private string $world;
+    /** @var string */
+    private $name, $mode, $world, $platform;
 
-    private string $platform;
-
-    private array $spawns;
+    /** @var array */
+    private $spawns;
 
     /**
      * FFAGameData constructor.

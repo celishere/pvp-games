@@ -38,11 +38,16 @@ use pocketmine\plugin\PluginBase;
  */
 class Main extends PluginBase {
 
-    private static Main $instance;
-    private static DBManager $dbManager;
-    private static GameManager $gameManager;
-    private static SessionManager $sessionManager;
-    private static PlayerDataManager $playerDataManager;
+    /** @var self */
+    private static $instance;
+    /** @var DBManager */
+    private static $dbManager;
+    /** @var GameManager */
+    private static $gameManager;
+    /** @var SessionManager */
+    private static $sessionManager;
+    /** @var PlayerDataManager */
+    private static $playerDataManager;
 
     public function onLoad(): void {
         self::$instance           = $this;

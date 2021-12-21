@@ -18,15 +18,17 @@ class LanguageFactory {
     public const DIRECTORY = "languages";
     public const FALLBACK = "ru_ru"; //дефолтный язык
 
-    private static LanguageFactory $instance;
+    /** @var LanguageFactory */
+    private static $instance;
 
-    private static Language $language;
+    /** @var Language */
+    private static $language;
 
     /** @var Language[] */
-    private static array $languages = [];
+    private static $languages = [];
 
     /** @var string[] */
-    private static array $langAvailable = [
+    private static $langAvailable = [
         "en_us",
         "ru_ru"
     ];

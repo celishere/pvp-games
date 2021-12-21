@@ -21,7 +21,7 @@ use pocketmine\Player;
 final class GameManager {
 
     /** @var GameSession[] */
-    private array $games = [];
+    private $games = [];
 
     /**
      * @param GameData|FFAGameData $gameData

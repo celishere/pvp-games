@@ -20,15 +20,17 @@ use pocketmine\Player;
  */
 class PlayerData {
 
-    private Player $owner;
+    /** @var Player */
+    private $owner;
 
-    private ?GameSession $gameSession = null;
+    /** @var null */
+    private $gameSession = null;
 
-    private int $kills = 0;
-    private int $deaths = 0;
+    private $kills = 0;
+    private $deaths = 0;
 
-    private int $kill_streak = 0;
-    private int $max_kill_streak = 0;
+    private $kill_streak = 0;
+    private $max_kill_streak = 0;
 
     /**
      * PlayerData constructor.

@@ -10,7 +10,7 @@ use pocketmine\Player;
 
 use pocketmine\item\Item;
 
-use pocketmine\math\Vector3;
+use pocketmine\level\Position;
 
 /**
  * Class FFAMode
@@ -29,9 +29,9 @@ abstract class FFAMode {
     abstract public function getSession(): GameSession;
 
     /**
-     * @return Vector3
+     * @return Position
      */
-    abstract public function getPos(): Vector3;
+    abstract public function getPos(): Position;
 
     /**
      * @return Item[]

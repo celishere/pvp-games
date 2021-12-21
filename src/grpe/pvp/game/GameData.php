@@ -17,22 +17,20 @@ use pocketmine\level\Location;
  */
 final class GameData {
 
-    private string $name;
-    private string $mode;
-    private string $world;
-    private string $platform;
+    /** @var string */
+    private $name, $mode, $world, $platform;
 
-    private bool $team;
+    /** @var bool */
+    private $team;
 
-    private int $countdown;
-    private int $gameTime;
+    /** @var int  */
+    private $countdown, $gameTime, $maxPlayers;
 
-    private int $maxPlayers;
-
-    private Location $waitingRoom;
+    /** @var Location */
+    private $waitingRoom;
 
     /** @var Location[] */
-    private array $spawns;
+    private $spawns;
 
     /**
      * GameData constructor.
