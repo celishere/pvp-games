@@ -1,7 +1,7 @@
 {
-  "name": "desert",
+  "name": "desertStickDuels",
   "mode": "classic",
-  "world": "desert",
+  "world": "desert2",
   "platform": "all",
   "isTeam": false,
   "countdown": 5,

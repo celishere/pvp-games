@@ -1,0 +1,13 @@
+{
+  "name": "desertClassicDuels",
+  "mode": "classic",
+  "world": "desert1",
+  "platform": "all",
+  "isTeam": false,
+  "countdown": 5,
+  "gameTime": 60,
+  "maxPlayers": 4,
+  "waitingRoom": "-38.5_65_-31.5_90_2",
+  "pos1": "-38.5_65_-9.5_180_2",
+  "pos2": "-38.5_65_-53.5_360_2"
+}
